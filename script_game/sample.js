@@ -1,4 +1,4 @@
-
+//test123
 GameEngine = new bmacSdk.Engine("canvasDiv");
 
 sampleGame =
