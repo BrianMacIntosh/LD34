@@ -17,3 +17,11 @@ VillagerManager.prototype.update = function()
 		this.villagers[c].update();
 	}
 }
+
+VillagerManager.prototype.findPathTo = function(x, y)
+{
+	//TEMP:
+	return [ { x: x, y: y} ];
+	
+	//astar.search(GRAPH, STARTNODE, ENDNODE);
+}

@@ -3,6 +3,8 @@ var Player = function()
 {
 	Actor.call(this);
 	
+	this.transform.position.set(400, 200, 0);
+	
 	this.maxMovementSpeed = 100;
 	this.acceleration = 512;
 	
@@ -10,7 +12,7 @@ var Player = function()
 	this.geometry = bmacSdk.GEO.makeSpriteGeo(24,32);
 	this.mesh = bmacSdk.GEO.makeSpriteMesh(Player.texture, this.geometry);
 	this.transform.add(this.mesh);
-	this.mesh.position.set(400, 200, -20);
+	this.mesh.position.set(0, 0, -20);
 	
 	bmacSdk.GEO.setTilesheetGeometry(this.geometry, 0, 1, 24, 4);
 }

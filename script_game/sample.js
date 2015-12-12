@@ -31,5 +31,4 @@ sampleGame.update = function()
 	this.villagerManager.update();
 };
 
-
 GameEngine.addObject(sampleGame);
