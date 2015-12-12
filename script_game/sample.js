@@ -37,6 +37,8 @@ sampleGame.update = function()
 {
 	this.villagerManager.update();
 	this.cameraController.update();
+	this.tileManager.update();
+
 };
 
 GameEngine.addObject(sampleGame);

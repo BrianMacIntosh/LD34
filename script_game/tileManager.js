@@ -17,6 +17,9 @@ var lTileSize = 30
 var center = (centerLTileIndex*lTileSize)+Math.floor(lTileSize/2)-1
 
 tileManager = function(){
+	this.growCooldown = 2
+	this.currentGrowCooldown = 2
+
 	this.largeTileRows = []
 	for(var i = 0; i<(centerLTileIndex*2)+1; i++){
 		this.largeTileRows[i] = []
@@ -32,7 +35,10 @@ tileManager.textures =
 	THREE.ImageUtils.loadTexture("media/iron2.png"),
 	THREE.ImageUtils.loadTexture("media/stone1.png"),
 	THREE.ImageUtils.loadTexture("media/stone2.png"),
-	THREE.ImageUtils.loadTexture("media/water.png")
+	THREE.ImageUtils.loadTexture("media/water.png"),
+	THREE.ImageUtils.loadTexture("media/growth1.png"),
+	THREE.ImageUtils.loadTexture("media/growth2.png"),
+	THREE.ImageUtils.loadTexture("media/growth3.png")
 ]
 
 tileManager.geo = bmacSdk.GEO.makeSpriteGeo(64, 45);
@@ -43,16 +49,24 @@ var tile = function (terrainType, growthLevel, globalX, globalY){
 	this.growthLevel = ((growthLevel != null) ? growthLevel : 3);
 	
 	if(terainKey[terrainType].textureIndex.length != 0 && globalX != null){
-		var m = bmacSdk.GEO.makeSpriteMesh(
+		this.terrainMesh = bmacSdk.GEO.makeSpriteMesh(
 			tileManager.textures[
-				terainKey[terrainType].textureIndex[0
-					//Math.randomInt(terainKey[terrainType].textureIndex.length)
+				terainKey[terrainType].textureIndex[
+					Math.randomInt(terainKey[terrainType].textureIndex.length)
 				]
 			],
 		    tileManager.geo
 		);
-		m.position.set(globalX*64, globalY*45, -90);
-		GameEngine.scene.add(m);
+		this.terrainMesh.position.set(globalX*64, globalY*45, -90);
+		GameEngine.scene.add(this.terrainMesh);
+	}
+	this.drawGrowth = function(){
+		this.growthMesh = bmacSdk.GEO.makeSpriteMesh(tileManager.textures[6+this.growthLevel], tileManager.geo);
+		this.growthMesh.position.set(globalX*64, globalY*45, -90);
+		GameEngine.scene.add(this.growthMesh);
+	}
+	if(growthLevel != 0 && globalX != null){
+		this.drawGrowth()
 	}
 }
 
@@ -174,12 +188,13 @@ tileManager.prototype.growTiles = function(){ //grow the jungle
 	}
 }
 
-var growTileGroup = function(tileGroup){
+var growTileGroup = function(tileGroup){ //doesnt currently grow accross tile groups
 	var referenceCopy = tileGroup.slice();//I hope this doesnt overly hurt performance. Without the copy sprouting based on a newly grown plant can occur
 	for(var i = 0; i<tileGroup.length; i++){
 		for(var j = 0; j<tileGroup[i].length; j++){
 			if(tileGroup[i][j].growthLevel>0 && tileGroup[i][j].growthLevel<3){ //grow
 				tileGroup[i][j].growthLevel++;
+				tileGroup[i][j].drawGrowth()
 			}
 			if(tileGroup[i][j].growthLevel==0){ //sproutable? (empty spaces are the less common case)
 				for(var i2 = i-1; i2<=i+1; i2++){
@@ -187,6 +202,7 @@ var growTileGroup = function(tileGroup){
 						if(i2<lTileSize && j2<lTileSize && i2>=0 && j2>=0){ //is in bounds
 							if(referenceCopy[i2][j2].growthLevel>2){
 								tileGroup[i][j].growthLevel = 1;
+								tileGroup[i][j].drawGrowth()
 							}
 						}
 					}
@@ -195,3 +211,14 @@ var growTileGroup = function(tileGroup){
 		}
 	}
 }
+
+tileManager.prototype.update = function(){ //grow the jungle
+	if (this.currentGrowCooldown > 0){
+		this.currentGrowCooldown -= bmacSdk.deltaSec;
+	} else {
+		this.currentGrowCooldown = this.growCooldown;
+		this.growTiles();
+	}
+}
+
+
