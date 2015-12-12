@@ -3,6 +3,7 @@
 bmacSdk =
 {
 	CFG_PAUSE_WHEN_UNFOCUSED: true,
+	DEBUG_RENDERSTATS: true,
 	
 	//Used to ignore large frame delta after focusin
 	_eatFrame: false,
@@ -81,6 +82,15 @@ bmacSdk.Engine.prototype._attachDom = function()
 	this.renderer.setSize(this.screenWidth, this.screenHeight);
 	this.renderer.setClearColor(0x000000, 1);
 	
+	if (bmacSdk.DEBUG_RENDERSTATS)
+	{
+		this.rendererStats = new THREEx.RendererStats();
+		this.rendererStats.domElement.style.position = 'absolute';
+		this.rendererStats.domElement.style.left = '0px';
+		this.rendererStats.domElement.style.bottom = '0px';
+		document.body.appendChild(this.rendererStats.domElement);
+	}
+	
 	//TODO: 2D depth management
 	
 	//Input
@@ -118,6 +128,11 @@ bmacSdk.Engine.prototype._animate = function()
 	
 	//Render
 	this.renderer.render(this.scene, this.mainCamera);
+	
+	if (this.rendererStats)
+	{
+		this.rendererStats.update(this.renderer);
+	}
 };
 
 bmacSdk._animate = function()
