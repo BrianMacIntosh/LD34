@@ -235,7 +235,7 @@ Actor.prototype.swingMachete = function()
 		// hit the target
 		if (targetTile)
 		{
-			targetTile.growthLevel = Math.max(0, targetTile.growthLevel - 1);
+			targetTile.growthLevel = Math.max(0, targetTile.growthLevel - 2);
 			targetTile.drawGrowth();
 		}
 		

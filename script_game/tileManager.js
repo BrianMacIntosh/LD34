@@ -1,15 +1,15 @@
 //A library to manage tiles
 
-var terainKey = [
- {type:"neutral", textureIndex:[0]},
- {type:"sandy", textureIndex:[1]},
- {type:"stone", textureIndex:[4,5]},
- {type:"wood", textureIndex:[]},
- {type:"iron", textureIndex:[2,3]},
- {type:"food", textureIndex:[]},
- {type:"water", textureIndex:[6]},
- {type:"villageHall", textureIndex:[]},
- {type:"rockBlock", textureIndex:[]}
+var terainKey = [ //growthChance = x/30
+ {type:"neutral", growthChance:5, textureIndex:[0]},
+ {type:"sandy", growthChance:3, textureIndex:[1]},
+ {type:"stone", growthChance:1, textureIndex:[4,5]},
+ {type:"wood", growthChance:2, textureIndex:[]},
+ {type:"iron", growthChance:1, textureIndex:[2,3]},
+ {type:"food", growthChance:3, textureIndex:[]},
+ {type:"water", growthChance:3, textureIndex:[6]},
+ {type:"villageHall", growthChance:1, textureIndex:[]},
+ {type:"rockBlock", growthChance:1, textureIndex:[]}
 ]
 var growthKey = ["clear", "light", "medium", "heavy"]
 var centerLTileIndex = 3 //impies map total size
@@ -203,7 +203,13 @@ tileManager.prototype.growTiles = function(){ //grow the jungle
 }
 
 var growTileGroup = function(tileGroup){ //doesnt currently grow accross tile groups
-	var referenceCopy = tileGroup.slice();//I hope this doesnt overly hurt performance. Without the copy sprouting based on a newly grown plant can occur
+	var referenceCopy = []
+	for(var i = 0; i<lTileSize; i++){
+		referenceCopy[i] = []
+		for(var j = 0; j<lTileSize; j++){
+			referenceCopy[i][j]=tileGroup[i][j].growthLevel
+		}
+	}//I hope this doesnt overly hurt performance. Without the copy sprouting based on a newly grown plant can occur
 	for(var i = 0; i<tileGroup.length; i++){
 		for(var j = 0; j<tileGroup[i].length; j++){
 			if(tileGroup[i][j].growthLevel>0 && tileGroup[i][j].growthLevel<3){ //grow
@@ -214,7 +220,8 @@ var growTileGroup = function(tileGroup){ //doesnt currently grow accross tile gr
 				for(var i2 = i-1; i2<=i+1; i2++){
 					for(var j2 = j-1; j2<=j+1; j2++){
 						if(i2<lTileSize && j2<lTileSize && i2>=0 && j2>=0){ //is in bounds
-							if(referenceCopy[i2][j2].growthLevel>2){
+							if(referenceCopy[i2][j2]>=2 
+								&& terainKey[tileGroup[i][j].terrainType].growthChance>Math.randomInt(30)+1){
 								tileGroup[i][j].growthLevel = 1;
 								tileGroup[i][j].drawGrowth()
 							}
