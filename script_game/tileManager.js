@@ -15,12 +15,12 @@ var growthKey = ["clear", "light", "medium", "heavy"]
 var centerLTileIndex = 3 //impies map total size
 var lTileSize = 30
 var center = (centerLTileIndex*lTileSize)+Math.floor(lTileSize/2)-1
-var tilePixelWidth = 64;
-var tilePixelHeight = 45;
+var tilePixelWidth = 64
+var tilePixelHeight = 45
 
 tileManager = function(){
-	this.growCooldown = 2
-	this.currentGrowCooldown = 2
+	this.growCooldown = 4
+	this.currentGrowCooldown = this.growCooldown
 
 	this.largeTileRows = []
 	for(var i = 0; i<(centerLTileIndex*2)+1; i++){

@@ -170,6 +170,26 @@ Actor.prototype.update = function()
 	}
 }
 
+Actor.prototype.getFacingX = function()
+{
+	if (this.direction == 1)
+		return 1;
+	else if (this.direction == 3)
+		return -1;
+	else
+		return 0;
+}
+
+Actor.prototype.getFacingY = function()
+{
+	if (this.direction == 0)
+		return -1;
+	else if (this.direction == 2)
+		return 1;
+	else
+		return 0;
+}
+
 Actor.prototype.swingMachete = function()
 {
 	if (this.currentMacheteCooldown > 0)
@@ -181,7 +201,28 @@ Actor.prototype.swingMachete = function()
 		// execute machete swing
 		this.queueSwingMachete = false;
 		
-		//TODO: stuff!
+		// first try to hit the tile I am on
+		var targetTile = undefined;
+		var myTile = sampleGame.tileManager.getTileAtWorld(this.transform.position.x, this.transform.position.y);
+		if (myTile.growthLevel > 0)
+		{
+			targetTile = myTile;
+		}
+		
+		// if there's nothing there, try to hit the tile I am facing
+		if (!targetTile)
+		{
+			targetTile = sampleGame.tileManager.getTileAtWorld(
+				this.transform.position.x + this.getFacingX() * tilePixelWidth,
+				this.transform.position.y + this.getFacingY() * tilePixelHeight);
+		}
+		
+		// hit the target
+		if (targetTile)
+		{
+			targetTile.growthLevel = Math.max(0, targetTile.growthLevel - 1);
+			targetTile.drawGrowth();
+		}
 		
 		this.slashMesh0.visible = !this.slashAlternatingState;
 		this.slashMesh1.visible = this.slashAlternatingState;
