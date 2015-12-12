@@ -80,6 +80,11 @@ Actor.prototype.update = function()
 	this.transform.position.x += this.velocity.x * bmacSdk.deltaSec;
 	this.transform.position.y += this.velocity.y * bmacSdk.deltaSec * Actor.yMotionMultiplier;
 	
+	// restrict in bounds
+	//TODO: unify with other collision code?
+	this.transform.position.x = Math.clamp(this.transform.position.x, sampleGame.hardWorldBounds[0], sampleGame.hardWorldBounds[2]);
+	this.transform.position.y = Math.clamp(this.transform.position.y, sampleGame.hardWorldBounds[1], sampleGame.hardWorldBounds[3]);
+	
 	// reset desired movement
 	this.desiredMovement.x = this.desiredMovement.y = 0;
 	

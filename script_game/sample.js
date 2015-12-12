@@ -19,6 +19,11 @@ sampleGame.added = function()
 	GameEngine.addObject(this.player);
 	
 	this.villagerManager = new VillagerManager();
+	
+	this.cameraController = new CameraController(GameEngine.mainCamera);
+	
+	// left top right bottom
+	this.hardWorldBounds = [-500, -500, 500, 500 ];
 };
 
 sampleGame.removed = function()
@@ -29,6 +34,7 @@ sampleGame.removed = function()
 sampleGame.update = function()
 {
 	this.villagerManager.update();
+	this.cameraController.update();
 };
 
 GameEngine.addObject(sampleGame);
