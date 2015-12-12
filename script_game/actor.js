@@ -1,10 +1,16 @@
 
 var Actor = function()
 {
-	this.transform = new THREE.Object3D();
-	GameEngine.scene.add(this.transform);
 	this.maxMovementSpeed = 30;
 	this.acceleration = 256;
+	this.macheteCooldown = 0.4;
+	
+	this.currentMacheteCooldown = 0;
+	this.queueSwingMachete = false;
+	
+	this.transform = new THREE.Object3D();
+	GameEngine.scene.add(this.transform);
+	
 	this.velocity = new Vector2();
 	this.desiredMovement = new Vector2();
 	
@@ -14,8 +20,28 @@ var Actor = function()
 
 Actor.frameTime = 0.03;
 
+Actor.macheteSounds =
+[
+	"media/118792__lmbubec__1-knife-slash-a.wav"
+];
+
+// multiplier on Y movement to account for the iso camera angle
+Actor.yMotionMultiplier = Math.sin(Math.PI/4);
+
 Actor.prototype.update = function()
 {
+	// cool down machete
+	if (this.currentMacheteCooldown > 0)
+	{
+		this.currentMacheteCooldown -= bmacSdk.deltaSec;
+	}
+	
+	// swing machete if you attempted to do so during the cooldown
+	if (this.queueSwingMachete && this.currentMacheteCooldown <= 0)
+	{
+		this.swingMachete();
+	}
+	
 	if (this.desiredMovement.x !== 0)
 	{
 		// accelerate
@@ -52,7 +78,7 @@ Actor.prototype.update = function()
 	
 	// move based on the desired movement
 	this.transform.position.x += this.velocity.x * bmacSdk.deltaSec;
-	this.transform.position.y += this.velocity.y * bmacSdk.deltaSec;
+	this.transform.position.y += this.velocity.y * bmacSdk.deltaSec * Actor.yMotionMultiplier;
 	
 	// reset desired movement
 	this.desiredMovement.x = this.desiredMovement.y = 0;
@@ -89,5 +115,23 @@ Actor.prototype.update = function()
 				bmacSdk.GEO.setTilesheetGeometry(this.geometry, this.currentFrame, direction, 24, 4);
 			}
 		}
+	}
+}
+
+Actor.prototype.swingMachete = function()
+{
+	if (this.currentMacheteCooldown > 0)
+	{
+		this.queueSwingMachete = true;
+	}
+	else
+	{
+		// execute machete swing
+		this.queueSwingMachete = false;
+		
+		//TODO: stuff!
+		AUDIOMANAGER.playSound(Actor.macheteSounds);
+		
+		this.currentMacheteCooldown = this.macheteCooldown;
 	}
 }

@@ -17,6 +17,8 @@ sampleGame.added = function()
 	
 	this.player = new Player();
 	GameEngine.addObject(this.player);
+	
+	this.villagerManager = new VillagerManager();
 };
 
 sampleGame.removed = function()
@@ -26,7 +28,7 @@ sampleGame.removed = function()
 
 sampleGame.update = function()
 {
-	
+	this.villagerManager.update();
 };
 
 
