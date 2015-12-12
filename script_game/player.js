@@ -75,5 +75,7 @@ Player.prototype.update = function()
 		this.swingMachete();
 	}
 	
+	//console.log(sampleGame.tileManager.getTileAtWorld(this.transform.position.x, this.transform.position.y));
+	
 	Actor.prototype.update.call(this);
 }

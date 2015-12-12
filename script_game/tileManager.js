@@ -15,6 +15,8 @@ var growthKey = ["clear", "light", "medium", "heavy"]
 var centerLTileIndex = 3 //impies map total size
 var lTileSize = 30
 var center = (centerLTileIndex*lTileSize)+Math.floor(lTileSize/2)-1
+var tilePixelWidth = 64;
+var tilePixelHeight = 45;
 
 tileManager = function(){
 	this.growCooldown = 2
@@ -41,7 +43,7 @@ tileManager.textures =
 	THREE.ImageUtils.loadTexture("media/growth3.png")
 ]
 
-tileManager.geo = bmacSdk.GEO.makeSpriteGeo(64, 45);
+tileManager.geo = bmacSdk.GEO.makeSpriteGeo(tilePixelWidth, tilePixelHeight);
 
 
 var tile = function (terrainType, growthLevel, globalX, globalY){
@@ -57,12 +59,12 @@ var tile = function (terrainType, growthLevel, globalX, globalY){
 			],
 		    tileManager.geo
 		);
-		this.terrainMesh.position.set(globalX*64, globalY*45, -90);
+		this.terrainMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, -90);
 		GameEngine.scene.add(this.terrainMesh);
 	}
 	this.drawGrowth = function(){
 		this.growthMesh = bmacSdk.GEO.makeSpriteMesh(tileManager.textures[6+this.growthLevel], tileManager.geo);
-		this.growthMesh.position.set(globalX*64, globalY*45, -90);
+		this.growthMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, -90);
 		GameEngine.scene.add(this.growthMesh);
 	}
 	if(growthLevel != 0 && globalX != null){
@@ -162,6 +164,10 @@ var genStartingTileGroup = function(lTileX,lTileY){
 		}
 	}
 	return tiles;
+}
+
+tileManager.prototype.getTileAtWorld = function(x, y){
+	return this.getTile(Math.floor(x/tilePixelWidth + 0.5), Math.floor(y/tilePixelHeight + 0.5));
 }
 
 tileManager.prototype.getTile = function(x, y){ // external 0,0 is largeTileRows[startingIndex][startingIndex][14][14]

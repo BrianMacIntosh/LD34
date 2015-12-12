@@ -40,17 +40,17 @@ sampleGame.update = function()
 
 sampleGame.getWorldBoundsMinX = function()
 {
-	return (-0.5) * 30 * 64 + 32;
+	return (-0.5) * lTileSize * tilePixelWidth + tilePixelWidth / 2;
 };
 
 sampleGame.getWorldBoundsMaxX = function()
 {
-	return (this.tileManager.largeTileRows.length - 0.5) * 30 * 64 + 32;
+	return (this.tileManager.largeTileRows.length - 0.5) * lTileSize * tilePixelWidth + tilePixelWidth / 2;
 };
 
 sampleGame.getWorldBoundsMinY = function()
 {
-	return (-0.5) * 30 * 45 + 32;
+	return (-0.5) * lTileSize * tilePixelHeight + tilePixelHeight / 2;
 };
 
 sampleGame.getWorldBoundsMaxY = function()
@@ -61,7 +61,7 @@ sampleGame.getWorldBoundsMaxY = function()
 	{
 		maxColumnSize = Math.max(maxColumnSize, this.tileManager.largeTileRows[c].length);
 	}
-	return (maxColumnSize - 0.5) * 30 * 45 + 32;
+	return (maxColumnSize - 0.5) * lTileSize * tilePixelHeight + tilePixelHeight / 2;
 };
 
 GameEngine.addObject(sampleGame);
