@@ -26,7 +26,7 @@ Actor.macheteSounds =
 ];
 
 // multiplier on Y movement to account for the iso camera angle
-Actor.yMotionMultiplier = Math.sin(Math.PI/4);
+Actor.yMotionMultiplier = 1 / Math.sqrt(2);
 
 Actor.prototype.update = function()
 {

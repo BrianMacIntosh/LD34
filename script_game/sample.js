@@ -9,7 +9,7 @@ sampleGame =
 sampleGame.added = function()
 {
 	this.dirtTexture = THREE.ImageUtils.loadTexture("media/dirt.png");
-	this.dirtGeo = bmacSdk.GEO.makeSpriteGeo(128, 64);
+	this.dirtGeo = bmacSdk.GEO.makeSpriteGeo(64, 45);
 	
 	var m = bmacSdk.GEO.makeSpriteMesh(this.dirtTexture, this.dirtGeo);
 	m.position.set(200, 200, -90);
