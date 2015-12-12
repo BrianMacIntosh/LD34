@@ -132,19 +132,22 @@ Actor.prototype.update = function()
 	this.desiredMovement.x = this.desiredMovement.y = 0;
 	
 	// determine walk direction
-	if (Math.abs(this.velocity.x) > Math.abs(this.velocity.y))
+	if (Math.abs(this.velocity.x) > 0.5 || Math.abs(this.velocity.y) > 0.5)
 	{
-		if (this.velocity.x < 0)
-			this.direction = 3;
+		if (Math.abs(this.velocity.x) < Math.abs(this.velocity.y))
+		{
+			if (this.velocity.y < 0)
+				this.direction = 0;
+			else
+				this.direction = 2;
+		}
 		else
-			this.direction = 1;
-	}
-	else if (Math.abs(this.velocity.x) < Math.abs(this.velocity.y))
-	{
-		if (this.velocity.y < 0)
-			this.direction = 0;
-		else
-			this.direction = 2;
+		{
+			if (this.velocity.x < 0)
+				this.direction = 3;
+			else
+				this.direction = 1;
+		}
 	}
 	
 	// rotate the vfx parent
@@ -234,7 +237,7 @@ Actor.prototype.swingMachete = function()
 		this.slashMesh1.visible = this.slashAlternatingState;
 		this.slashTimer = 0;
 		
-		AUDIOMANAGER.playSound(Actor.macheteSounds);
+		//AUDIOMANAGER.playSound(Actor.macheteSounds);
 		
 		this.slashAlternatingState = !this.slashAlternatingState;
 		this.currentMacheteCooldown = this.macheteCooldown;

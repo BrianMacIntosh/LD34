@@ -31,7 +31,12 @@ Villager.prototype.update = function()
 	//TEMP:
 	if (!this.path || this.path.length <= 0)
 	{
-		this.pathToLocation((Math.random() - 0.5) * 200, (Math.random() - 0.5) * 200);
+		if (this.task)
+		{
+			sampleGame.villagerManager.freeTask(this.task);
+		}
+		this.task = sampleGame.villagerManager.takeTask();
+		this.pathToLocation(this.task.x * tilePixelWidth, this.task.y * tilePixelHeight);
 	}
 	
 	var destination = undefined;
@@ -47,6 +52,19 @@ Villager.prototype.update = function()
 		this.desiredMovement.y = oldSignToDestinationY;
 	}
 	
+	// if we are standing on or looking at a tile with growth, swing the machete
+	var tile = sampleGame.tileManager.getTileAtWorld(this.transform.position.x, this.transform.position.y);
+	if (!tile || tile.growthLevel == 0)
+	{
+		tile = sampleGame.tileManager.getTileAtWorld(
+			this.transform.position.x + this.getFacingX() * tilePixelWidth,
+			this.transform.position.y + this.getFacingY() * tilePixelHeight);
+	}
+	if (tile && tile.growthLevel > 0)
+	{
+		this.swingMachete();
+	}
+	
 	Actor.prototype.update.call(this);
 	
 	if (destination)
@@ -54,8 +72,17 @@ Villager.prototype.update = function()
 		// detect reaching destination
 		var signToDestinationX = Math.sign(destination.x - this.transform.position.x);
 		var signToDestinationY = Math.sign(destination.y - this.transform.position.y);
-		if ((signToDestinationX !== oldSignToDestinationX || oldSignToDestinationX == 0)
-		 && (signToDestinationY !== oldSignToDestinationY || oldSignToDestinationY == 0))
+		var passedX = signToDestinationX !== oldSignToDestinationX || oldSignToDestinationX == 0;
+		var passedY = signToDestinationY !== oldSignToDestinationY || oldSignToDestinationY == 0;
+		if (passedX)
+		{
+			this.transform.position.x = destination.x;
+		}
+		if (passedY)
+		{
+			this.transform.position.y = destination.y;
+		}
+		if (passedX && passedY)
 		{
 			if (this.path && this.path.length > 0)
 			{
