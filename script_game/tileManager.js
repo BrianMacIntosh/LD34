@@ -63,9 +63,17 @@ var tile = function (terrainType, growthLevel, globalX, globalY){
 		GameEngine.scene.add(this.terrainMesh);
 	}
 	this.drawGrowth = function(){
-		this.growthMesh = bmacSdk.GEO.makeSpriteMesh(tileManager.textures[6+this.growthLevel], tileManager.geo);
-		this.growthMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, -90);
-		GameEngine.scene.add(this.growthMesh);
+		if (!this.growthMesh){
+			this.growthMesh = bmacSdk.GEO.makeSpriteMesh(tileManager.textures[6+this.growthLevel], tileManager.geo);
+			this.growthMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, -90);
+			GameEngine.scene.add(this.growthMesh);
+		}
+		if (this.growthLevel > 0) {
+			this.growthMesh.material.map = tileManager.textures[6+this.growthLevel];
+			this.growthMesh.visible = true;
+		} else {
+			this.growthMesh.visible = false;
+		}
 	}
 	if(growthLevel != 0 && globalX != null){
 		this.drawGrowth()

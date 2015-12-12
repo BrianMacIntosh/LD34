@@ -7,6 +7,7 @@ var Actor = function()
 	this.macheteCooldown = 0.4;
 	this.slashAlternatingState = false;
 	this.slashTimer = 0;
+	this.growthSpeedMultiplier = [ 1, 0.66, 0.33, 0.05 ];
 	
 	this.currentMacheteCooldown = 0;
 	this.queueSwingMachete = false;
@@ -113,6 +114,11 @@ Actor.prototype.update = function()
 		velY *= this.slashSpeedReduction;
 	}
 	
+	// cap velocity moving in growth
+	var currentTile = sampleGame.tileManager.getTileAtWorld(this.transform.position.x, this.transform.position.y);
+	velX *= this.growthSpeedMultiplier[currentTile.growthLevel];
+	velY *= this.growthSpeedMultiplier[currentTile.growthLevel];
+	
 	// move based on the desired movement
 	this.transform.position.x += velX * bmacSdk.deltaSec;
 	this.transform.position.y += velY * bmacSdk.deltaSec * Actor.yMotionMultiplier;
@@ -194,7 +200,7 @@ Actor.prototype.swingMachete = function()
 {
 	if (this.currentMacheteCooldown > 0)
 	{
-		this.queueSwingMachete = true;
+		//this.queueSwingMachete = true;
 	}
 	else
 	{

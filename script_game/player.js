@@ -44,8 +44,8 @@ Player.controls =
 	},
 	machete: function()
 	{
-		return GameEngine.keyboard.keyPressed("z")
-			|| bmacSdk.INPUT.gamepadButtonPressed(bmacSdk.INPUT.FIRST_PLAYER, bmacSdk.INPUT.GB_A);
+		return GameEngine.keyboard.keyDown("z")
+			|| bmacSdk.INPUT.gamepadButtonDown(bmacSdk.INPUT.FIRST_PLAYER, bmacSdk.INPUT.GB_A);
 	},
 }
 
