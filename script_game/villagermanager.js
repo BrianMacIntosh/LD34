@@ -5,7 +5,7 @@ var VillagerManager = function()
 	this.tasks = [];
 	
 	//TEMP: create some test villagers
-	for (var c = 0; c < 5; c++)
+	for (var c = 0; c < 10; c++)
 	{
 		this.villagers.push(new Villager());
 	}
@@ -56,12 +56,25 @@ VillagerManager.prototype.freeTask = function(task)
 	task.villagersAssigned--;
 }
 
-VillagerManager.prototype.findPathTo = function(x, y)
+VillagerManager.prototype.findPath = function(fromX, fromY, toX, toY)
 {
 	//TEMP:
-	return [ { x: x, y: y} ];
+	//return [ { x: toX, y: toY} ];
 	
-	//astar.search(GRAPH, STARTNODE, ENDNODE);
+	// the graph doesn't contain negative tiles (it's offset)
+	// so offset the input data
+	var centerOffset = Math.floor(lTileSize/2)-1;
+	fromX += centerOffset;
+	fromY += centerOffset;
+	toX += centerOffset;
+	toY += centerOffset; //HACK: center offset
+	
+	console.log("(" + fromX + "," + fromY + ")->(" + toX + "," + toY + ")");
+	
+	var graph = sampleGame.tileManager.pathfindingGraph;
+	var start = graph.grid[fromX][fromY];
+	var end = graph.grid[toX][toY];
+	return astar.search(graph, start, end);
 }
 
 VillagerManager.prototype.flagResourceAt = function(x, y)
@@ -116,6 +129,11 @@ var ClearTileTask = function(x, y)
 	this.priority = VillagerManager.maxVillageClearPriority * (1 - this.priority);
 }
 
+ClearTileTask.prototype.getActionIconIndex = function()
+{
+	return 0;
+}
+
 ClearTileTask.prototype.getPriority = function()
 {
 	var tile = sampleGame.tileManager.getTile(this.x, this.y);
@@ -148,6 +166,11 @@ ResourceTask.prototype.destroy = function()
 	GameEngine.scene.remove(this.flagMesh);
 }
 
+ResourceTask.prototype.getActionIconIndex = function()
+{
+	return 1;
+}
+
 ResourceTask.prototype.getPriority = function()
 {
 	return 100;
@@ -158,6 +181,11 @@ var ReturnResourceTask = function()
 {
 	this.x = 0;
 	this.y = 0;
+}
+
+ReturnResourceTask.prototype.getActionIconIndex = function()
+{
+	return 2;
 }
 
 ReturnResourceTask.prototype.getPriority = function()

@@ -14,6 +14,12 @@ var Villager = function()
 	this.transform.add(this.mesh);
 	this.mesh.position.set(0, 0, -20);
 	
+	// create action icon
+	this.iconGeometry = bmacSdk.GEO.makeSpriteGeo(24, 21);
+	this.iconMesh = bmacSdk.GEO.makeSpriteMesh(Villager.actionTexture, this.iconGeometry);
+	this.transform.add(this.iconMesh);
+	this.iconMesh.position.set(0, -40, -15);
+	
 	this.path = [];
 	
 	bmacSdk.GEO.setTilesheetGeometry(this.geometry, 0, 1, 24, 4);
@@ -23,6 +29,8 @@ Villager.textures =
 [
 	THREE.ImageUtils.loadTexture("media/villager.png"),
 ]
+
+Villager.actionTexture = THREE.ImageUtils.loadTexture("media/actionicons.png"),
 
 Villager.prototype = Object.create(Actor.prototype);
 
@@ -55,13 +63,18 @@ Villager.prototype.update = function()
 		{
 			this.task = sampleGame.villagerManager.takeTask();
 		}
-		this.pathToLocation(this.task.x * tilePixelWidth, this.task.y * tilePixelHeight);
+		bmacSdk.GEO.setTilesheetGeometry(this.iconGeometry, this.task.getActionIconIndex(), 0, 3, 1);
+		this.pathToLocation(this.task.x, this.task.y);
 	}
 	
 	var destination = undefined;
 	if (this.path && this.path.length > 0)
 	{
-		destination = this.path[0];
+		var centerOffset = Math.floor(lTileSize/2)-1;
+		destination = { //HACK: centering
+			x:(this.path[0].x-centerOffset) * tilePixelWidth,
+			y:(this.path[0].y-centerOffset) * tilePixelHeight
+		};
 		
 		// navigate toward destination
 		var oldSignToDestinationX = Math.sign(destination.x - this.transform.position.x);
@@ -116,5 +129,8 @@ Villager.prototype.update = function()
 
 Villager.prototype.pathToLocation = function(x, y)
 {
-	this.path = sampleGame.villagerManager.findPathTo(x, y);
+	this.path = sampleGame.villagerManager.findPath(
+		sampleGame.tileManager.worldToTileX(this.transform.position.x),
+		sampleGame.tileManager.worldToTileY(this.transform.position.y),
+		x, y);
 }

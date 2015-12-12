@@ -95,7 +95,7 @@ Player.prototype.update = function()
 			if (sampleGame.villagerManager.hasResourceFlagAt(tileX, tileY))
 			{
 				//TODO: resource name string
-				interactionMessage = "(X): Unflag " + resource;
+				interactionMessage = "(X): Unflag " + resourceKey[resource].type;
 				
 				if (Player.controls.interact())
 				{
@@ -105,7 +105,7 @@ Player.prototype.update = function()
 			else
 			{
 				//TODO: resource name string
-				interactionMessage = "(X): Flag " + resource + " for gathering";
+				interactionMessage = "(X): Flag " + resourceKey[resource].type + " for gathering";
 				
 				if (Player.controls.interact())
 				{

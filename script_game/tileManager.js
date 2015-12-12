@@ -1,17 +1,29 @@
 //A library to manage tiles
 
+var resourceKey = [
+ {type:"stone"},
+ {type:"wood"},
+ {type:"iron"},
+ {type:"food"},
+ {type:"water"},
+]
 var terainKey = [ //growthChance = x/30
  {type:"neutral", growthChance:5, textureIndex:[0]},
  {type:"sandy", growthChance:3, textureIndex:[1]},
  {type:"stone", growthChance:1, textureIndex:[4,5], resource: 1},
  {type:"wood", growthChance:2, textureIndex:[], resource: 2},
  {type:"iron", growthChance:1, textureIndex:[2,3], resource: 3},
- {type:"food", growthChance:3, textureIndex:[7], resource: 4},
+ {type:"food", growthChance:3, textureIndex:[10], resource: 4},
  {type:"water", growthChance:3, textureIndex:[6], resource: 5},
  {type:"villageHall", growthChance:1, textureIndex:[]},
  {type:"rockBlock", growthChance:1, textureIndex:[]}
 ]
-var growthKey = ["clear", "light", "medium", "heavy"]
+var growthKey = [
+ {type:"clear", pathWeight:2, speedMultiplier:1},
+ {type:"light", pathWeight:1, speedMultiplier:0.66},
+ {type:"medium", pathWeight:2, speedMultiplier:0.33},
+ {type:"heavy", pathWeight:12, speedMultiplier:0.05},
+]
 var centerLTileIndex = 3 //impies map total size
 var lTileSize = 30
 var center = (centerLTileIndex*lTileSize)+Math.floor(lTileSize/2)-1
@@ -27,6 +39,7 @@ tileManager = function(){
 		this.largeTileRows[i] = []
 	}
 	this.largeTileRows[centerLTileIndex][centerLTileIndex] = genStartingTileGroup(centerLTileIndex, centerLTileIndex)
+	this.updatePathfindingGraph();
 }
 
 tileManager.textures =
@@ -217,6 +230,7 @@ tileManager.prototype.growTiles = function(){ //grow the jungle
 			}
 		}
 	}
+	this.pathfindingNeedsUpdate = true;
 }
 
 var growTileGroup = function(tileGroup){ //doesnt currently grow accross tile groups
@@ -250,12 +264,41 @@ var growTileGroup = function(tileGroup){ //doesnt currently grow accross tile gr
 	}
 }
 
+tileManager.prototype.updatePathfindingGraph = function(){
+	//TODO: update weights in place if graph already exists
+	var weights = [];
+	// such nesting. much wow.
+	for (var lx=0; lx<this.largeTileRows.length; lx++){
+		if (this.largeTileRows[lx]){
+			for (var ly=0; ly<=this.largeTileRows[lx].length; ly++){
+				if (this.largeTileRows[lx][ly]){
+					for (var x=0; x<this.largeTileRows[lx][ly].length; x++){
+						for (var y=0; y<this.largeTileRows[lx][ly][x].length; y++){
+							if (!weights[y]){
+								weights[y] = [];
+							}
+							var tile = this.largeTileRows[lx][ly][x][y];
+							weights[y][x] = tile ? growthKey[tile.growthLevel].pathWeight : 0;
+						}
+					}
+				}
+			}
+		}
+	}
+	this.pathfindingGraph = new Graph(weights);
+	this.pathfindingNeedsUpdate = false;
+}
+
 tileManager.prototype.update = function(){ //grow the jungle
 	if (this.currentGrowCooldown > 0){
 		this.currentGrowCooldown -= bmacSdk.deltaSec;
 	} else {
 		this.currentGrowCooldown = this.growCooldown;
 		this.growTiles();
+	}
+	
+	if (this.pathfindingNeedsUpdate){
+		this.updatePathfindingGraph();
 	}
 }
 

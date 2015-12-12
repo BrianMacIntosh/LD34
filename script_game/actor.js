@@ -1,13 +1,12 @@
 
 var Actor = function()
 {
-	this.maxMovementSpeed = 30;
+	this.maxMovementSpeed = 60;
 	this.slashSpeedReduction = 0.65; //speed is capped at max times this when slashing
 	this.acceleration = 256;
 	this.macheteCooldown = 0.4;
 	this.slashAlternatingState = false;
 	this.slashTimer = 0;
-	this.growthSpeedMultiplier = [ 1, 0.66, 0.33, 0.05 ];
 	
 	this.currentMacheteCooldown = 0;
 	this.queueSwingMachete = false;
@@ -116,8 +115,8 @@ Actor.prototype.update = function()
 	
 	// cap velocity moving in growth
 	var currentTile = sampleGame.tileManager.getTileAtWorld(this.transform.position.x, this.transform.position.y);
-	velX *= this.growthSpeedMultiplier[currentTile.growthLevel];
-	velY *= this.growthSpeedMultiplier[currentTile.growthLevel];
+	velX *= growthKey[currentTile.growthLevel].speedMultiplier;
+	velY *= growthKey[currentTile.growthLevel].speedMultiplier;
 	
 	// move based on the desired movement
 	this.transform.position.x += velX * bmacSdk.deltaSec;
@@ -237,6 +236,7 @@ Actor.prototype.swingMachete = function()
 		{
 			targetTile.growthLevel = Math.max(0, targetTile.growthLevel - 2);
 			targetTile.drawGrowth();
+			sampleGame.tileManager.pathfindingNeedsUpdate = true;
 		}
 		
 		this.slashMesh0.visible = !this.slashAlternatingState;
