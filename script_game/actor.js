@@ -119,8 +119,8 @@ Actor.prototype.update = function()
 	
 	// restrict in bounds
 	//TODO: unify with other collision code?
-	this.transform.position.x = Math.clamp(this.transform.position.x, sampleGame.hardWorldBounds[0], sampleGame.hardWorldBounds[2]);
-	this.transform.position.y = Math.clamp(this.transform.position.y, sampleGame.hardWorldBounds[1], sampleGame.hardWorldBounds[3]);
+	this.transform.position.x = Math.clamp(this.transform.position.x, sampleGame.getWorldBoundsMinX(), sampleGame.getWorldBoundsMaxX());
+	this.transform.position.y = Math.clamp(this.transform.position.y, sampleGame.getWorldBoundsMinY(), sampleGame.getWorldBoundsMaxY());
 	
 	// reset desired movement
 	this.desiredMovement.x = this.desiredMovement.y = 0;

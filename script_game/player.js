@@ -3,7 +3,7 @@ var Player = function()
 {
 	Actor.call(this);
 	
-	this.transform.position.set(400, 200, 0);
+	this.transform.position.set(0, 0, 0);
 	
 	this.maxMovementSpeed = 100;
 	this.acceleration = 512;

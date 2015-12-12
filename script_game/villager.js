@@ -5,7 +5,7 @@ var Villager = function()
 	
 	this.acceleration = 99999;
 	
-	this.transform.position.set(400, 200, 0);
+	this.transform.position.set(0, 0, 0);
 	
 	// create mesh
 	this.geometry = bmacSdk.GEO.makeSpriteGeo(24,32);
@@ -31,7 +31,7 @@ Villager.prototype.update = function()
 	//TEMP:
 	if (!this.path || this.path.length <= 0)
 	{
-		this.pathToLocation(400 + (Math.random() - 0.5) * 200, 300 + (Math.random() - 0.5) * 200);
+		this.pathToLocation((Math.random() - 0.5) * 200, (Math.random() - 0.5) * 200);
 	}
 	
 	var destination = undefined;

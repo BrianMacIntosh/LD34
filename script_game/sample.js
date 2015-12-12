@@ -23,9 +23,6 @@ sampleGame.added = function()
 	this.villagerManager = new VillagerManager();
 	
 	this.cameraController = new CameraController(GameEngine.mainCamera);
-	
-	// left top right bottom
-	this.hardWorldBounds = [-500, -500, 500, 500 ];
 };
 
 sampleGame.removed = function()
@@ -39,6 +36,32 @@ sampleGame.update = function()
 	this.cameraController.update();
 	this.tileManager.update();
 
+};
+
+sampleGame.getWorldBoundsMinX = function()
+{
+	return (-0.5) * 30 * 64 + 32;
+};
+
+sampleGame.getWorldBoundsMaxX = function()
+{
+	return (this.tileManager.largeTileRows.length - 0.5) * 30 * 64 + 32;
+};
+
+sampleGame.getWorldBoundsMinY = function()
+{
+	return (-0.5) * 30 * 45 + 32;
+};
+
+sampleGame.getWorldBoundsMaxY = function()
+{
+	// use maximum size of any column
+	var maxColumnSize = 0;
+	for (var c = 0; c < this.tileManager.largeTileRows.length; c++)
+	{
+		maxColumnSize = Math.max(maxColumnSize, this.tileManager.largeTileRows[c].length);
+	}
+	return (maxColumnSize - 0.5) * 30 * 45 + 32;
 };
 
 GameEngine.addObject(sampleGame);
