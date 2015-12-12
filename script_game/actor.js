@@ -2,8 +2,11 @@
 var Actor = function()
 {
 	this.maxMovementSpeed = 30;
+	this.slashSpeedReduction = 0.65; //speed is capped at max times this when slashing
 	this.acceleration = 256;
 	this.macheteCooldown = 0.4;
+	this.slashAlternatingState = false;
+	this.slashTimer = 0;
 	
 	this.currentMacheteCooldown = 0;
 	this.queueSwingMachete = false;
@@ -12,13 +15,37 @@ var Actor = function()
 	GameEngine.scene.add(this.transform);
 	
 	this.velocity = new Vector2();
+	this.direction = 0;
 	this.desiredMovement = new Vector2();
 	
 	this.timeToNextFrame = 0;
 	this.currentFrame = 0;
+	
+	// create slashing vfx
+	this.slashParent = new THREE.Object3D();
+	this.transform.add(this.slashParent);
+	this.slashParent.position.set(0,0,0);
+	
+	this.slashMesh0 = new THREE.Mesh(Actor.slashVfxGeo, Actor.slashVfxMaterials[0]);
+	this.slashParent.add(this.slashMesh0);
+	this.slashMesh0.position.set(20,0,-20);
+	this.slashMesh0.visible = false;
+	this.slashMesh1 = new THREE.Mesh(Actor.slashVfxGeo, Actor.slashVfxMaterials[1]);
+	this.slashParent.add(this.slashMesh1);
+	this.slashMesh1.position.set(20,0,-20);
+	this.slashMesh1.visible = false;
 }
 
+Actor.slashVfxGeo = bmacSdk.GEO.makeSpriteGeo(33,23);
+
+Actor.slashVfxMaterials =
+[
+	new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture("media/vfx_slash1.png"), transparent:true }),
+	new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture("media/vfx_slash2.png"), transparent:true }),
+]
+
 Actor.frameTime = 0.03;
+Actor.slashVfxLifetime = 0.25;
 
 Actor.macheteSounds =
 [
@@ -76,9 +103,19 @@ Actor.prototype.update = function()
 		}
 	}
 	
+	var velX = this.velocity.x;
+	var velY = this.velocity.y;
+	
+	// cap velocity while slashing
+	if (this.slashTimer <= this.macheteCooldown)
+	{
+		velX *= this.slashSpeedReduction;
+		velY *= this.slashSpeedReduction;
+	}
+	
 	// move based on the desired movement
-	this.transform.position.x += this.velocity.x * bmacSdk.deltaSec;
-	this.transform.position.y += this.velocity.y * bmacSdk.deltaSec * Actor.yMotionMultiplier;
+	this.transform.position.x += velX * bmacSdk.deltaSec;
+	this.transform.position.y += velY * bmacSdk.deltaSec * Actor.yMotionMultiplier;
 	
 	// restrict in bounds
 	//TODO: unify with other collision code?
@@ -89,21 +126,23 @@ Actor.prototype.update = function()
 	this.desiredMovement.x = this.desiredMovement.y = 0;
 	
 	// determine walk direction
-	var direction = 0;
 	if (Math.abs(this.velocity.x) > Math.abs(this.velocity.y))
 	{
 		if (this.velocity.x < 0)
-			direction = 3;
+			this.direction = 3;
 		else
-			direction = 1;
+			this.direction = 1;
 	}
-	else
+	else if (Math.abs(this.velocity.x) < Math.abs(this.velocity.y))
 	{
 		if (this.velocity.y < 0)
-			direction = 0;
+			this.direction = 0;
 		else
-			direction = 2;
+			this.direction = 2;
 	}
+	
+	// rotate the vfx parent
+	this.slashParent.rotation.z = Math.PI * (this.direction-1) / 2;
 	
 	// advance walk animation
 	if (this.velocity.x !== 0 || this.velocity.y !== 0)
@@ -117,9 +156,17 @@ Actor.prototype.update = function()
 			
 			if (this.geometry)
 			{
-				bmacSdk.GEO.setTilesheetGeometry(this.geometry, this.currentFrame, direction, 24, 4);
+				bmacSdk.GEO.setTilesheetGeometry(this.geometry, this.currentFrame, this.direction, 24, 4);
 			}
 		}
+	}
+	
+	// hide slash vfx
+	var lastSlashTimer = this.slashTimer;
+	this.slashTimer += bmacSdk.deltaSec;
+	if (lastSlashTimer < Actor.slashVfxLifetime && this.slashTimer >= Actor.slashVfxLifetime)
+	{
+		this.slashMesh0.visible = this.slashMesh1.visible = false;
 	}
 }
 
@@ -135,8 +182,14 @@ Actor.prototype.swingMachete = function()
 		this.queueSwingMachete = false;
 		
 		//TODO: stuff!
+		
+		this.slashMesh0.visible = !this.slashAlternatingState;
+		this.slashMesh1.visible = this.slashAlternatingState;
+		this.slashTimer = 0;
+		
 		AUDIOMANAGER.playSound(Actor.macheteSounds);
 		
+		this.slashAlternatingState = !this.slashAlternatingState;
 		this.currentMacheteCooldown = this.macheteCooldown;
 	}
 }
