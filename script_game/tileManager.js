@@ -96,7 +96,7 @@ var genStartingTileGroup = function(){
 			if(tiles[i][j] == null){ //fill tiles that are still empty
 				if((i==15||i==14)&&(j==14||j==15)){
 					tiles[i][j] = new tile(7, 0);
-				} else if ((i>9&&i<19)&&(j>9||j<19)){
+				} else if ((i>9&&i<19)&&(j>9&&j<19)){
 					tiles[i][j] = new tile(0, 0);
 				} else
 					tiles[i][j] = new tile();
@@ -106,7 +106,6 @@ var genStartingTileGroup = function(){
 	return tiles;
 }
 
-//center = (startingTileGroupIndex*lTileSize)+14
 tileManager.prototype.getTile = function(x, y){ // external 0,0 is largeTileRows[startingIndex][startingIndex][14][14]
 	var lTileX = Math.floor((center+x)/lTileSize)
 	var lTileY = Math.floor((center+y)/lTileSize)
@@ -119,4 +118,36 @@ tileManager.prototype.getTile = function(x, y){ // external 0,0 is largeTileRows
 		this.largeTileRows[lTileX][lTileY] = genTileGroup(lTileX,lTileY);
 	}
 	return this.largeTileRows[lTileX][lTileY][sTileX][sTileY]
+}
+
+tileManager.prototype.growTiles = function(){ //grow the jungle
+	for(var i = 0; i<this.largeTileRows.length; i++){
+		for(var j = 0; j<this.largeTileRows[i].length; j++){
+			if(this.largeTileRows[i][j] != null){
+				growTileGroup(this.largeTileRows[i][j])
+			}
+		}
+	}
+}
+
+var growTileGroup = function(tileGroup){
+	var referenceCopy = tileGroup.slice();//I hope this doesnt overly hurt performance. Without the copy sprouting based on a newly grown plant can occur
+	for(var i = 0; i<tileGroup.length; i++){
+		for(var j = 0; j<tileGroup[i].length; j++){
+			if(tileGroup[i][j].growthLevel>0 && tileGroup[i][j].growthLevel<3){ //grow
+				tileGroup[i][j].growthLevel++;
+			}
+			if(tileGroup[i][j].growthLevel==0){ //sproutable? (empty spaces are the less common case)
+				for(var i2 = i-1; i2<=i+1; i2++){
+					for(var j2 = j-1; j2<=j+1; j2++){
+						if(i2<lTileSize && j2<lTileSize && i2>=0 && j2>=0){ //is in bounds
+							if(referenceCopy[i2][j2].growthLevel>2){
+								tileGroup[i][j].growthLevel = 1;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
