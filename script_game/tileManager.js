@@ -1,6 +1,16 @@
 //A library to manage tiles
 
-var terainKey = ["neutral", "sandy", "stone", "wood", "iron", "food", "water", "villageHall","rockBlock"]
+var terainKey = [
+ {type:"neutral", textureIndex:[0]},
+ {type:"sandy", textureIndex:[1]},
+ {type:"stone", textureIndex:[4,5]},
+ {type:"wood", textureIndex:[]},
+ {type:"iron", textureIndex:[2,3]},
+ {type:"food", textureIndex:[]},
+ {type:"water", textureIndex:[6]},
+ {type:"villageHall", textureIndex:[]},
+ {type:"rockBlock", textureIndex:[]}
+]
 var growthKey = ["clear", "light", "medium", "heavy"]
 var centerLTileIndex = 3 //impies map total size
 var lTileSize = 30
@@ -17,7 +27,12 @@ tileManager = function(){
 tileManager.textures =
 [
 	THREE.ImageUtils.loadTexture("media/dirt.png"),
-	THREE.ImageUtils.loadTexture("media/sand.png")
+	THREE.ImageUtils.loadTexture("media/sand.png"),
+	THREE.ImageUtils.loadTexture("media/iron1.png"),
+	THREE.ImageUtils.loadTexture("media/iron2.png"),
+	THREE.ImageUtils.loadTexture("media/stone1.png"),
+	THREE.ImageUtils.loadTexture("media/stone2.png"),
+	THREE.ImageUtils.loadTexture("media/water.png")
 ]
 
 tileManager.geo = bmacSdk.GEO.makeSpriteGeo(64, 45);
@@ -27,8 +42,15 @@ var tile = function (terrainType, growthLevel, globalX, globalY){
 	this.terrainType = ((terrainType != null) ? terrainType : 0);
 	this.growthLevel = ((growthLevel != null) ? growthLevel : 3);
 	
-	if(tileManager.textures[terrainType] != null && globalX != null){
-		var m = bmacSdk.GEO.makeSpriteMesh(tileManager.textures[terrainType], tileManager.geo);
+	if(terainKey[terrainType].textureIndex.length != 0 && globalX != null){
+		var m = bmacSdk.GEO.makeSpriteMesh(
+			tileManager.textures[
+				terainKey[terrainType].textureIndex[0
+					//Math.randomInt(terainKey[terrainType].textureIndex.length)
+				]
+			],
+		    tileManager.geo
+		);
 		m.position.set(globalX*64, globalY*45, -90);
 		GameEngine.scene.add(m);
 	}
@@ -78,7 +100,7 @@ var genTileGroup = function(lTileX,lTileY){
 				  	tiles[i][j] = new tile(4, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				    break;
 				  default:
-					tiles[i][j] = new tile(0,3,,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+					tiles[i][j] = new tile(0,3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				    break;
 				}
 			}
@@ -93,17 +115,24 @@ var genStartingTileGroup = function(lTileX,lTileY){
 		tiles[i] = []
 	}
 
-	tiles[Math.randomInt(lTileSize)][Math.randomInt(lTileSize)] = new tile(5, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center); //food
-	tiles[Math.randomInt(lTileSize)][Math.randomInt(lTileSize)] = new tile(5, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center); //food
+	var placeNotInCenter = function(type){
+		do {
+	   	var i = Math.randomInt(lTileSize);
+		var j = Math.randomInt(lTileSize);
+		} while (((i>10&&i<19)&&(j>10&&j<19)));
+		tiles[i][j] = new tile(type, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center); //food
+	}
+	placeNotInCenter(5);//food
+	placeNotInCenter(5);
 
-	tiles[Math.randomInt(lTileSize)][Math.randomInt(lTileSize)] = new tile(3, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center); //wood
-	tiles[Math.randomInt(lTileSize)][Math.randomInt(lTileSize)] = new tile(3, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center); //wood
+	placeNotInCenter(3);//wood
+	placeNotInCenter(3);
 
-	tiles[Math.randomInt(lTileSize)][Math.randomInt(lTileSize)] = new tile(2, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);	//stone
-	tiles[Math.randomInt(lTileSize)][Math.randomInt(lTileSize)] = new tile(2, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);	//stone
+	placeNotInCenter(2);//stone
+	placeNotInCenter(2);
 
-	tiles[Math.randomInt(lTileSize)][Math.randomInt(lTileSize)] = new tile(4, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center); //iron
-	tiles[Math.randomInt(lTileSize)][Math.randomInt(lTileSize)] = new tile(4, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center); //iron
+	placeNotInCenter(4);//iron
+	placeNotInCenter(4);
 
 
 	for(var i = 0; i<lTileSize; i++){
