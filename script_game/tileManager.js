@@ -175,8 +175,24 @@ var genStartingTileGroup = function(lTileX,lTileY){
 	return tiles;
 }
 
+tileManager.prototype.worldToTileX = function(x){
+	return Math.floor(x/tilePixelWidth + 0.5);
+}
+
+tileManager.prototype.worldToTileY = function(y){
+	return Math.floor(y/tilePixelHeight + 0.5);
+}
+
+tileManager.prototype.tileToWorldX = function(x){
+	return x*tilePixelWidth;
+}
+
+tileManager.prototype.tileToWorldY = function(y){
+	return (y+0.5)*tilePixelHeight;
+}
+
 tileManager.prototype.getTileAtWorld = function(x, y){
-	return this.getTile(Math.floor(x/tilePixelWidth + 0.5), Math.floor(y/tilePixelHeight + 0.5));
+	return this.getTile(this.worldToTileX(x), this.worldToTileY(y));
 }
 
 tileManager.prototype.getTile = function(x, y){ // external 0,0 is largeTileRows[startingIndex][startingIndex][14][14]

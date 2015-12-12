@@ -28,14 +28,33 @@ Villager.prototype = Object.create(Actor.prototype);
 
 Villager.prototype.update = function()
 {
+	var tile = sampleGame.tileManager.getTileAtWorld(this.transform.position.x, this.transform.position.y);
+	
 	//TEMP:
 	if (!this.path || this.path.length <= 0)
 	{
 		if (this.task)
 		{
 			sampleGame.villagerManager.freeTask(this.task);
+			if (this.task instanceof ResourceTask)
+			{
+				// pick up a resource and take it back
+				this.heldResource = terainKey[tile.terrainType].resource;
+			}
+			else if (this.task instanceof ReturnResourceTask)
+			{
+				//TODO: return resource
+				this.heldResource = undefined;
+			}
 		}
-		this.task = sampleGame.villagerManager.takeTask();
+		if (this.heldResource)
+		{
+			this.task = new ReturnResourceTask();
+		}
+		else
+		{
+			this.task = sampleGame.villagerManager.takeTask();
+		}
 		this.pathToLocation(this.task.x * tilePixelWidth, this.task.y * tilePixelHeight);
 	}
 	
@@ -53,7 +72,6 @@ Villager.prototype.update = function()
 	}
 	
 	// if we are standing on or looking at a tile with growth, swing the machete
-	var tile = sampleGame.tileManager.getTileAtWorld(this.transform.position.x, this.transform.position.y);
 	if (!tile || tile.growthLevel == 0)
 	{
 		tile = sampleGame.tileManager.getTileAtWorld(

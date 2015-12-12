@@ -14,6 +14,8 @@ var Player = function()
 	this.transform.add(this.mesh);
 	this.mesh.position.set(0, 0, -20);
 	
+	this.controlHelperDom = document.getElementById("interactionMessage");
+	
 	bmacSdk.GEO.setTilesheetGeometry(this.geometry, 0, 1, 24, 4);
 }
 
@@ -47,6 +49,11 @@ Player.controls =
 		return GameEngine.keyboard.keyDown("z")
 			|| bmacSdk.INPUT.gamepadButtonDown(bmacSdk.INPUT.FIRST_PLAYER, bmacSdk.INPUT.GB_A);
 	},
+	interact: function()
+	{
+		return GameEngine.keyboard.keyPressed("x")
+			|| bmacSdk.INPUT.gamepadButtonPressed(bmacSdk.INPUT.FIRST_PLAYER, bmacSdk.INPUT.GB_B);
+	},
 }
 
 Player.prototype = Object.create(Actor.prototype);
@@ -75,7 +82,42 @@ Player.prototype.update = function()
 		this.swingMachete();
 	}
 	
-	//console.log(sampleGame.tileManager.getTileAtWorld(this.transform.position.x, this.transform.position.y));
+	// display a UI helper for the player to interact with things
+	var tileX = sampleGame.tileManager.worldToTileX(this.transform.position.x);
+	var tileY = sampleGame.tileManager.worldToTileY(this.transform.position.y);
+	var currentTile = sampleGame.tileManager.getTile(tileX, tileY);
+	var interactionMessage = "";
+	if (currentTile)
+	{
+		var resource = terainKey[currentTile.terrainType].resource;
+		if (resource !== undefined && currentTile.growthLevel < 3)
+		{
+			if (sampleGame.villagerManager.hasResourceFlagAt(tileX, tileY))
+			{
+				//TODO: resource name string
+				interactionMessage = "(X): Unflag " + resource;
+				
+				if (Player.controls.interact())
+				{
+					sampleGame.villagerManager.unflagResourceAt(tileX, tileY);
+				}
+			}
+			else
+			{
+				//TODO: resource name string
+				interactionMessage = "(X): Flag " + resource + " for gathering";
+				
+				if (Player.controls.interact())
+				{
+					sampleGame.villagerManager.flagResourceAt(tileX, tileY);
+				}
+			}
+		}
+	}
+	if (interactionMessage != this.controlHelperDom.innerHTML)
+	{
+		this.controlHelperDom.innerHTML = interactionMessage;
+	}
 	
 	Actor.prototype.update.call(this);
 }

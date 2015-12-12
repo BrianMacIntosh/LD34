@@ -18,6 +18,9 @@ var VillagerManager = function()
 	}}
 }
 
+VillagerManager.flagMaterial = new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture("media/flag.png"), transparent:true });
+VillagerManager.flagGeometry = bmacSdk.GEO.makeSpriteGeo(64,82);
+
 // radius around village in which villagers should keep foliage clear
 VillagerManager.villageClearRadiusTiles = 4;
 VillagerManager.maxVillageClearPriority = 50;
@@ -61,6 +64,40 @@ VillagerManager.prototype.findPathTo = function(x, y)
 	//astar.search(GRAPH, STARTNODE, ENDNODE);
 }
 
+VillagerManager.prototype.flagResourceAt = function(x, y)
+{
+	if (!this.hasResourceFlagAt(x, y))
+	{
+		var task = new ResourceTask(x, y);
+		this.tasks.push(task);
+	}
+}
+
+VillagerManager.prototype.unflagResourceAt = function(x, y)
+{
+	for (var c = this.tasks.length - 1; c >= 0; c--)
+	{
+		if (this.tasks[c] instanceof ResourceTask
+		 && this.tasks[c].x == x && this.tasks[c].y == y)
+		{
+			this.tasks[c].destroy();
+			this.tasks.splice(c, 1);
+		}
+	}
+}
+
+VillagerManager.prototype.hasResourceFlagAt = function(x, y)
+{
+	for (var c = 0; c < this.tasks.length; c++)
+	{
+		if (this.tasks[c] instanceof ResourceTask
+		 && this.tasks[c].x == x && this.tasks[c].y == y)
+		{
+			return true;
+		}
+	}
+}
+
 VillagerManager.compareTasks = function(a, b)
 {
 	return b.getPriority() - a.getPriority();
@@ -90,4 +127,40 @@ ClearTileTask.prototype.getPriority = function()
 	{
 		return 0;
 	}
+}
+
+
+var ResourceTask = function(x, y)
+{
+	this.x = x;
+	this.y = y;
+	this.villagersAssigned = 0;
+	this.buildRoads = true;
+	
+	this.flagMesh = new THREE.Mesh(VillagerManager.flagGeometry, VillagerManager.flagMaterial);
+	GameEngine.scene.add(this.flagMesh);
+	this.flagMesh.position.set(sampleGame.tileManager.tileToWorldX(this.x),
+		sampleGame.tileManager.tileToWorldY(this.y) - 41, -80);
+}
+
+ResourceTask.prototype.destroy = function()
+{
+	GameEngine.scene.remove(this.flagMesh);
+}
+
+ResourceTask.prototype.getPriority = function()
+{
+	return 100;
+}
+
+
+var ReturnResourceTask = function()
+{
+	this.x = 0;
+	this.y = 0;
+}
+
+ReturnResourceTask.prototype.getPriority = function()
+{
+	return 1000;
 }
