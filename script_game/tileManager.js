@@ -3,11 +3,11 @@
 var terainKey = [ //growthChance = x/30
  {type:"neutral", growthChance:5, textureIndex:[0]},
  {type:"sandy", growthChance:3, textureIndex:[1]},
- {type:"stone", growthChance:1, textureIndex:[4,5]},
- {type:"wood", growthChance:2, textureIndex:[]},
- {type:"iron", growthChance:1, textureIndex:[2,3]},
- {type:"food", growthChance:3, textureIndex:[]},
- {type:"water", growthChance:3, textureIndex:[6]},
+ {type:"stone", growthChance:1, textureIndex:[4,5], resource: 1},
+ {type:"wood", growthChance:2, textureIndex:[], resource: 2},
+ {type:"iron", growthChance:1, textureIndex:[2,3], resource: 3},
+ {type:"food", growthChance:3, textureIndex:[7], resource: 4},
+ {type:"water", growthChance:3, textureIndex:[6], resource: 5},
  {type:"villageHall", growthChance:1, textureIndex:[]},
  {type:"rockBlock", growthChance:1, textureIndex:[]}
 ]
@@ -40,7 +40,8 @@ tileManager.textures =
 	THREE.ImageUtils.loadTexture("media/water.png"),
 	THREE.ImageUtils.loadTexture("media/growth1.png"),
 	THREE.ImageUtils.loadTexture("media/growth2.png"),
-	THREE.ImageUtils.loadTexture("media/growth3.png")
+	THREE.ImageUtils.loadTexture("media/growth3.png"),
+	THREE.ImageUtils.loadTexture("media/food.png"),
 ]
 
 tileManager.geo = bmacSdk.GEO.makeSpriteGeo(tilePixelWidth, tilePixelHeight);
