@@ -66,7 +66,7 @@ var tile = function (terrainType, growthLevel, globalX, globalY){
 	this.drawGrowth = function(){
 		if (!this.growthMesh){
 			this.growthMesh = bmacSdk.GEO.makeSpriteMesh(tileManager.textures[6+this.growthLevel], tileManager.geo);
-			this.growthMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, -90);
+			this.growthMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, -85);
 			GameEngine.scene.add(this.growthMesh);
 		}
 		if (this.growthLevel > 0) {
