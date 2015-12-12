@@ -221,10 +221,16 @@ Actor.prototype.swingMachete = function()
 		// if there's nothing there, try to hit the tile I am facing
 		if (!targetTile)
 		{
-			targetTile = sampleGame.tileManager.getTileAtWorld(
+			myTile = sampleGame.tileManager.getTileAtWorld(
 				this.transform.position.x + this.getFacingX() * tilePixelWidth,
 				this.transform.position.y + this.getFacingY() * tilePixelHeight);
+			if (myTile.growthLevel > 0)
+			{
+				targetTile = myTile;
+			}
 		}
+		
+		//TODO: also try to hit things slightly to the left and right
 		
 		// hit the target
 		if (targetTile)

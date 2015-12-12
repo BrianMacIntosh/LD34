@@ -5,7 +5,7 @@ var VillagerManager = function()
 	this.tasks = [];
 	
 	//TEMP: create some test villagers
-	for (var c = 0; c < 3; c++)
+	for (var c = 0; c < 5; c++)
 	{
 		this.villagers.push(new Villager());
 	}
