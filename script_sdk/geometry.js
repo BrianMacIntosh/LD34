@@ -1,7 +1,7 @@
 
 bmacSdk.GEO = 
 {
-	c_planeCorrection: new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(Math.PI, 0, 0))
+	c_planeCorrection: new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(Math.PI, 0, 0)),
 };
 
 bmacSdk.GEO.makeSpriteMesh = function(tex, geo)
@@ -23,6 +23,24 @@ bmacSdk.GEO.distance = function(thing1, thing2)
 	var dx = thing1.x - thing2.x;
 	var dy = thing1.y - thing2.y;
 	return Math.sqrt(dx*dx+dy*dy);
+}
+
+bmacSdk.GEO.setTilesheetGeometry = function(geo, x, y, countX, countY)
+{
+	uvs = geo.faceVertexUvs[0];
+	var l = x/countX;
+	var b = 1-y/countY;
+	var r = (x+1)/countX;
+	var t = 1-(y+1)/countY;
+	//if (geo.atlas_flipx){var temp=l;l=r;r=temp;}
+	//if (geo.atlas_flipy){var temp=t;t=b;b=temp;}
+	uvs[0][0].set(l,b);
+	uvs[0][1].set(l,t);
+	uvs[0][2].set(r,b);
+	uvs[1][0].set(l,t);
+	uvs[1][1].set(r,t);
+	uvs[1][2].set(r,b);
+	geo.uvsNeedUpdate = true;
 }
 
 bmacSdk.GEO.loadAtlas = function(url,width,height,data)
@@ -88,9 +106,8 @@ bmacSdk.GEO.setAtlasUVs = function(geo,atlas,key,flipX,flipY)
 	uvs[1][2].set(r,b);
 	geo.uvsNeedUpdate = true;
 	
-	verts = geo.vertices;
-	
-	geo.verticesNeedUpdate = true;
+	//verts = geo.vertices;
+	//geo.verticesNeedUpdate = true;
 }
 
 bmacSdk.GEO.setAtlasGeometry = function(geo,atlas,key,flipX,flipY)

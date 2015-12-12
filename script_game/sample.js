@@ -1,4 +1,4 @@
-//test123
+
 GameEngine = new bmacSdk.Engine("canvasDiv");
 
 sampleGame =
@@ -12,8 +12,11 @@ sampleGame.added = function()
 	this.dirtGeo = bmacSdk.GEO.makeSpriteGeo(128, 64);
 	
 	var m = bmacSdk.GEO.makeSpriteMesh(this.dirtTexture, this.dirtGeo);
-	m.position.set(200, 200, -10);
+	m.position.set(200, 200, -90);
 	GameEngine.scene.add(m);
+	
+	this.player = new Player();
+	GameEngine.addObject(this.player);
 };
 
 sampleGame.removed = function()
