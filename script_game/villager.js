@@ -5,7 +5,7 @@ var Villager = function()
 	
 	this.acceleration = 99999;
 	
-	this.transform.position.set(0, 0, 0);
+	this.transform.position.set(-50, 0, 0);
 	
 	// create mesh
 	this.geometry = bmacSdk.GEO.makeSpriteGeo(24,32);

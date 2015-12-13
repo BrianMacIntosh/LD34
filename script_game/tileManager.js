@@ -8,8 +8,11 @@ var terainKey = [ //growthChance = x/30
  {type:"iron", growthChance:1, textureIndex:[2,3], resource: "iron"},
  {type:"food", growthChance:3, textureIndex:[10], resource: "food"},
  {type:"water", growthChance:3, textureIndex:[6], resource: "water"},
- {type:"villageHall", growthChance:1, textureIndex:[]},
- {type:"rockBlock", growthChance:1, textureIndex:[]}
+ {type:"rockBlock", growthChance:1, textureIndex:[], blocking: true},
+ {type:"villageHall_ne", growthChance:1, textureIndex:[11], blocking: true},
+ {type:"villageHall_se", growthChance:1, textureIndex:[12], blocking: true},
+ {type:"villageHall_sw", growthChance:1, textureIndex:[13], blocking: true},
+ {type:"villageHall_nw", growthChance:1, textureIndex:[14], blocking: true},
 ]
 var growthKey = [
  {type:"clear", pathWeight:2, speedMultiplier:1},
@@ -37,20 +40,42 @@ tileManager = function(){
 
 tileManager.textures =
 [
-	THREE.ImageUtils.loadTexture("media/dirt.png"),
-	THREE.ImageUtils.loadTexture("media/sand.png"),
-	THREE.ImageUtils.loadTexture("media/iron1.png"),
-	THREE.ImageUtils.loadTexture("media/iron2.png"),
-	THREE.ImageUtils.loadTexture("media/stone1.png"),
-	THREE.ImageUtils.loadTexture("media/stone2.png"),
-	THREE.ImageUtils.loadTexture("media/water.png"),
-	THREE.ImageUtils.loadTexture("media/growth1.png"),
-	THREE.ImageUtils.loadTexture("media/growth2.png"),
-	THREE.ImageUtils.loadTexture("media/growth3.png"),
-	THREE.ImageUtils.loadTexture("media/food.png"),
+	{map:THREE.ImageUtils.loadTexture("media/dirt.png")},
+	{map:THREE.ImageUtils.loadTexture("media/sand.png")},
+	{map:THREE.ImageUtils.loadTexture("media/iron1.png")},
+	{map:THREE.ImageUtils.loadTexture("media/iron2.png"),width:64,height:50,offY:-5/2},
+	{map:THREE.ImageUtils.loadTexture("media/stone1.png")},
+	{map:THREE.ImageUtils.loadTexture("media/stone2.png"),width:64,height:48,offY:-3/2},
+	{map:THREE.ImageUtils.loadTexture("media/water.png")},
+	{map:THREE.ImageUtils.loadTexture("media/growth1.png")},
+	{map:THREE.ImageUtils.loadTexture("media/growth2.png")},
+	{map:THREE.ImageUtils.loadTexture("media/growth3.png")},
+	{map:THREE.ImageUtils.loadTexture("media/food.png")}, //10
+	{map:THREE.ImageUtils.loadTexture("media/villagehall_ne.png"),width:105,height:95,offX:(105-tilePixelWidth)/2,offY:-(95-tilePixelHeight)/2},
+	{map:THREE.ImageUtils.loadTexture("media/villagehall_se.png"),width:105,height:119,offX:(105-tilePixelWidth)/2,offY:-18},
+	{map:THREE.ImageUtils.loadTexture("media/villagehall_sw.png"),width:64,height:119,offY:-18},
+	{map:THREE.ImageUtils.loadTexture("media/villagehall_nw.png"),width:64,height:95,offY:-(95-tilePixelHeight)/2},
 ]
 
+// initialize geometry for textures
 tileManager.geo = bmacSdk.GEO.makeSpriteGeo(tilePixelWidth, tilePixelHeight);
+for (var c = 0; c < tileManager.textures.length; c++)
+{
+	var texture = tileManager.textures[c];
+	if (texture.width !== undefined && texture.height !== undefined)
+	{
+		tileManager.textures[c].geo = bmacSdk.GEO.makeSpriteGeo(texture.width, texture.height);
+		if (texture.offX || texture.offY)
+		{
+			var matrix = new THREE.Matrix4().makeTranslation(texture.offX?texture.offX:0,texture.offY?texture.offY:0,0);
+			tileManager.textures[c].geo.applyMatrix(matrix);
+		}
+	}
+	else
+	{
+		tileManager.textures[c].geo = tileManager.geo;
+	}
+}
 
 
 var tile = function (terrainType, growthLevel, globalX, globalY){
@@ -58,25 +83,23 @@ var tile = function (terrainType, growthLevel, globalX, globalY){
 	this.growthLevel = ((growthLevel != null) ? growthLevel : 3);
 	
 	if(terainKey[terrainType].textureIndex.length != 0 && globalX != null){
-		this.terrainMesh = bmacSdk.GEO.makeSpriteMesh(
-			tileManager.textures[
+		var texture = tileManager.textures[
 				terainKey[terrainType].textureIndex[
 					Math.randomInt(terainKey[terrainType].textureIndex.length)
 				]
-			],
-		    tileManager.geo
-		);
+			];
+		this.terrainMesh = bmacSdk.GEO.makeSpriteMesh(texture.map, texture.geo);
 		this.terrainMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, -90);
 		GameEngine.scene.add(this.terrainMesh);
 	}
 	this.drawGrowth = function(){
 		if (!this.growthMesh){
-			this.growthMesh = bmacSdk.GEO.makeSpriteMesh(tileManager.textures[6+this.growthLevel], tileManager.geo);
+			this.growthMesh = bmacSdk.GEO.makeSpriteMesh(tileManager.textures[6+this.growthLevel].map, tileManager.geo);
 			this.growthMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, -30);
 			GameEngine.scene.add(this.growthMesh);
 		}
 		if (this.growthLevel > 0) {
-			this.growthMesh.material.map = tileManager.textures[6+this.growthLevel];
+			this.growthMesh.material.map = tileManager.textures[6+this.growthLevel].map;
 			this.growthMesh.visible = true;
 		} else {
 			this.growthMesh.visible = false;
@@ -95,22 +118,22 @@ var genTileGroup = function(lTileX,lTileY){
 	}
 	if(lTileX == 0){ //block west
 		for(var y = 0; y<lTileSize; y++){
-			tiles[0][y] = new tile(8, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+			tiles[0][y] = new tile(7, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 		}
 	} 
 	if(lTileX == centerLTileIndex*2){ //block west
 		for(var y = 0; y<lTileSize; y++){
-			tiles[lTileSize-1][y] = new tile(8, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+			tiles[lTileSize-1][y] = new tile(7, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 		}
 	}
 	if(lTileY == 0){ //block north
 		for(var x = 0; x<lTileSize; x++){
-			tiles[x][0] = new tile(8, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+			tiles[x][0] = new tile(7, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 		}
 	}
 	if(lTileY == centerLTileIndex*2){ //block south
 		for(var x = 0; x<lTileSize; x++){
-			tiles[x][lTileSize-1] = new tile(8, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+			tiles[x][lTileSize-1] = new tile(7, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 		}
 	}
 
@@ -169,15 +192,20 @@ var genStartingTileGroup = function(lTileX,lTileY){
 	for(var i = 0; i<lTileSize; i++){
 		for(var j = 0; j<lTileSize; j++){
 			if(tiles[i][j] == null){ //fill tiles that are still empty
-				if((i==15||i==14)&&(j==14||j==15)){
-					tiles[i][j] = new tile(7, 0,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
-				} else if ((i>10&&i<19)&&(j>10&&j<19)){
+				if ((i>10&&i<19)&&(j>10&&j<19)){
 					tiles[i][j] = new tile(0, 0,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				} else
 					tiles[i][j] = new tile(Math.randomInt(2),3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 			}
 		}
 	}
+	
+	// place the village hall
+	tiles[15][14] = new tile(8, 0,(lTileX*lTileSize+15)-center,(lTileY*lTileSize+14)-center);
+	tiles[15][15] = new tile(9, 0,(lTileX*lTileSize+15)-center,(lTileY*lTileSize+15)-center);
+	tiles[14][15] = new tile(10, 0,(lTileX*lTileSize+14)-center,(lTileY*lTileSize+15)-center);
+	tiles[14][14] = new tile(11, 0,(lTileX*lTileSize+14)-center,(lTileY*lTileSize+14)-center);
+	
 	return tiles;
 }
 
@@ -292,7 +320,16 @@ tileManager.prototype.updatePathfindingGraph = function(){
 					{
 						tile = this.largeTileRows[lx][ly][x][y];
 					}
-					weights[globalX][globalY] = tile ? growthKey[tile.growthLevel].pathWeight : 0;
+					//TODO: !terainKey[tile.terrainType].blocking
+					//needs to fix offset bug and AI needs to not path to those spaces
+					if (tile)
+					{
+						weights[globalX][globalY] = growthKey[tile.growthLevel].pathWeight;
+					}
+					else
+					{
+						weights[globalX][globalY] = 0;
+					}
 				}
 			}
 		}
