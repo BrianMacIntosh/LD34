@@ -12,7 +12,7 @@ var Player = function()
 	this.geometry = bmacSdk.GEO.makeSpriteGeo(24,32);
 	this.mesh = bmacSdk.GEO.makeSpriteMesh(Player.texture, this.geometry);
 	this.transform.add(this.mesh);
-	this.mesh.position.set(0, 0, -20);
+	this.mesh.position.set(0, 0, -50);
 	
 	this.controlHelperDom = document.getElementById("interactionMessage");
 	

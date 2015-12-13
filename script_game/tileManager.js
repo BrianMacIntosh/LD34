@@ -72,7 +72,7 @@ var tile = function (terrainType, growthLevel, globalX, globalY){
 	this.drawGrowth = function(){
 		if (!this.growthMesh){
 			this.growthMesh = bmacSdk.GEO.makeSpriteMesh(tileManager.textures[6+this.growthLevel], tileManager.geo);
-			this.growthMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, -85);
+			this.growthMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, -30);
 			GameEngine.scene.add(this.growthMesh);
 		}
 		if (this.growthLevel > 0) {
@@ -292,13 +292,28 @@ tileManager.prototype.updatePathfindingGraph = function(){
 					{
 						tile = this.largeTileRows[lx][ly][x][y];
 					}
-					weights[globalY][globalX] = tile ? growthKey[tile.growthLevel].pathWeight : 0;
+					weights[globalX][globalY] = tile ? growthKey[tile.growthLevel].pathWeight : 0;
 				}
 			}
 		}
 	}
 	this.pathfindingGraph = new Graph(weights);
 	this.pathfindingNeedsUpdate = false;
+}
+
+tileManager.prototype.dumpPathfindingGraph = function(){ //debug helper
+	var output = "";
+	for (var x = 0; x < this.pathfindingGraph.grid.length; x++)
+	{
+		for (var y = 0; y < this.pathfindingGraph.grid[x].length; y++)
+		{
+			var string = this.pathfindingGraph.grid[x][y].weight + "";
+			if (string.length == 1) output += "0";
+			output += string + "|";
+		}
+		output += "\n";
+	}
+	console.log(output);
 }
 
 tileManager.prototype.update = function(){ //grow the jungle

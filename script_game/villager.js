@@ -12,7 +12,7 @@ var Villager = function()
 	var texture = Villager.textures[Math.floor(Math.random() * Villager.textures.length)];
 	this.mesh = bmacSdk.GEO.makeSpriteMesh(texture, this.geometry);
 	this.transform.add(this.mesh);
-	this.mesh.position.set(0, 0, -20);
+	this.mesh.position.set(0, 0, -50);
 	
 	// create action icon
 	this.iconGeometry = bmacSdk.GEO.makeSpriteGeo(24, 21);

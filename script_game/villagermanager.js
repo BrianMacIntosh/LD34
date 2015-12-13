@@ -69,7 +69,7 @@ VillagerManager.prototype.findPath = function(fromX, fromY, toX, toY)
 	toX += centerOffset;
 	toY += centerOffset;
 	
-	//console.log("(" + fromX + "," + fromY + ")->(" + toX + "," + toY + ")");
+	console.log("(" + fromX + "," + fromY + ")->(" + toX + "," + toY + ")");
 	
 	var graph = sampleGame.tileManager.pathfindingGraph;
 	var start = graph.grid[fromX][fromY];
@@ -160,7 +160,7 @@ var ResourceTask = function(x, y)
 	this.flagMesh = new THREE.Mesh(VillagerManager.flagGeometry, VillagerManager.flagMaterial);
 	GameEngine.scene.add(this.flagMesh);
 	this.flagMesh.position.set(sampleGame.tileManager.tileToWorldX(this.x),
-		sampleGame.tileManager.tileToWorldY(this.y) - 41, -80);
+		sampleGame.tileManager.tileToWorldY(this.y) - 41, -20);
 }
 
 ResourceTask.prototype.destroy = function()
