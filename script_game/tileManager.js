@@ -40,21 +40,21 @@ tileManager = function(){
 
 tileManager.textures =
 [
-	{map:THREE.ImageUtils.loadTexture("media/dirt.png")},
-	{map:THREE.ImageUtils.loadTexture("media/sand.png")},
-	{map:THREE.ImageUtils.loadTexture("media/iron1.png")},
-	{map:THREE.ImageUtils.loadTexture("media/iron2.png"),width:64,height:50,offY:-5/2},
-	{map:THREE.ImageUtils.loadTexture("media/stone1.png")},
-	{map:THREE.ImageUtils.loadTexture("media/stone2.png"),width:64,height:48,offY:-3/2},
-	{map:THREE.ImageUtils.loadTexture("media/water.png")},
-	{map:THREE.ImageUtils.loadTexture("media/growth1.png")},
-	{map:THREE.ImageUtils.loadTexture("media/growth2.png")},
-	{map:THREE.ImageUtils.loadTexture("media/growth3.png")},
-	{map:THREE.ImageUtils.loadTexture("media/food.png")}, //10
-	{map:THREE.ImageUtils.loadTexture("media/villagehall_ne.png"),width:105,height:95,offX:(105-tilePixelWidth)/2,offY:-(95-tilePixelHeight)/2},
-	{map:THREE.ImageUtils.loadTexture("media/villagehall_se.png"),width:105,height:119,offX:(105-tilePixelWidth)/2,offY:-18},
-	{map:THREE.ImageUtils.loadTexture("media/villagehall_sw.png"),width:64,height:119,offY:-18},
-	{map:THREE.ImageUtils.loadTexture("media/villagehall_nw.png"),width:64,height:95,offY:-(95-tilePixelHeight)/2},
+	{map:bmacSdk.GEO.loadPixelTexture("media/dirt.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/sand.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/iron1.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/iron2.png"),width:64,height:50,offY:-5/2},
+	{map:bmacSdk.GEO.loadPixelTexture("media/stone1.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/stone2.png"),width:64,height:48,offY:-3/2},
+	{map:bmacSdk.GEO.loadPixelTexture("media/water.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/growth1.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/growth2.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/growth3.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/food.png")}, //10
+	{map:bmacSdk.GEO.loadPixelTexture("media/villagehall_ne.png"),width:105,height:95,offX:(105-tilePixelWidth)/2,offY:-(95-tilePixelHeight)/2},
+	{map:bmacSdk.GEO.loadPixelTexture("media/villagehall_se.png"),width:105,height:119,offX:(105-tilePixelWidth)/2,offY:-18},
+	{map:bmacSdk.GEO.loadPixelTexture("media/villagehall_sw.png"),width:64,height:119,offY:-18},
+	{map:bmacSdk.GEO.loadPixelTexture("media/villagehall_nw.png"),width:64,height:95,offY:-(95-tilePixelHeight)/2},
 ]
 
 // initialize geometry for textures

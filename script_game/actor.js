@@ -40,8 +40,8 @@ Actor.slashVfxGeo = bmacSdk.GEO.makeSpriteGeo(33,23);
 
 Actor.slashVfxMaterials =
 [
-	new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture("media/vfx_slash1.png"), transparent:true }),
-	new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture("media/vfx_slash2.png"), transparent:true }),
+	new THREE.MeshBasicMaterial({ map:bmacSdk.GEO.loadPixelTexture("media/vfx_slash1.png"), transparent:true }),
+	new THREE.MeshBasicMaterial({ map:bmacSdk.GEO.loadPixelTexture("media/vfx_slash2.png"), transparent:true }),
 ]
 
 Actor.frameTime = 0.03;

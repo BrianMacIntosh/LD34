@@ -27,10 +27,10 @@ var Villager = function()
 
 Villager.textures =
 [
-	THREE.ImageUtils.loadTexture("media/villager.png"),
+	bmacSdk.GEO.loadPixelTexture("media/villager.png"),
 ]
 
-Villager.actionTexture = THREE.ImageUtils.loadTexture("media/actionicons.png"),
+Villager.actionTexture = bmacSdk.GEO.loadPixelTexture("media/actionicons.png"),
 
 Villager.prototype = Object.create(Actor.prototype);
 

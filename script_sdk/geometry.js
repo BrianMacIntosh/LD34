@@ -4,6 +4,13 @@ bmacSdk.GEO =
 	c_planeCorrection: new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(Math.PI, 0, 0)),
 };
 
+bmacSdk.GEO.loadPixelTexture = function(url)
+{
+	var texture = THREE.ImageUtils.loadTexture(url);
+	texture.minFilter = texture.magFilter = THREE.NearestFilter;
+	return texture;
+}
+
 bmacSdk.GEO.makeSpriteMesh = function(tex, geo)
 {
 	var material = new THREE.MeshBasicMaterial({ map:tex, transparent:true });

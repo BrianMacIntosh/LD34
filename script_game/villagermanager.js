@@ -18,11 +18,11 @@ var VillagerManager = function()
 	}}
 }
 
-VillagerManager.flagMaterial = new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture("media/flag.png"), transparent:true });
-VillagerManager.foodFlagMaterial = new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture("media/foodflag.png"), transparent:true });
-VillagerManager.woodFlagMaterial = new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture("media/woodflag.png"), transparent:true });
-VillagerManager.ironFlagMaterial = new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture("media/ironflag.png"), transparent:true });
-VillagerManager.stoneFlagMaterial = new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture("media/stoneflag.png"), transparent:true });
+VillagerManager.flagMaterial = new THREE.MeshBasicMaterial({ map:bmacSdk.GEO.loadPixelTexture("media/flag.png"), transparent:true });
+VillagerManager.foodFlagMaterial = new THREE.MeshBasicMaterial({ map:bmacSdk.GEO.loadPixelTexture("media/foodflag.png"), transparent:true });
+VillagerManager.woodFlagMaterial = new THREE.MeshBasicMaterial({ map:bmacSdk.GEO.loadPixelTexture("media/woodflag.png"), transparent:true });
+VillagerManager.ironFlagMaterial = new THREE.MeshBasicMaterial({ map:bmacSdk.GEO.loadPixelTexture("media/ironflag.png"), transparent:true });
+VillagerManager.stoneFlagMaterial = new THREE.MeshBasicMaterial({ map:bmacSdk.GEO.loadPixelTexture("media/stoneflag.png"), transparent:true });
 
 VillagerManager.flagGeometry = bmacSdk.GEO.makeSpriteGeo(64,82);
 

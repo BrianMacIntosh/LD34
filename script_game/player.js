@@ -19,7 +19,7 @@ var Player = function()
 	bmacSdk.GEO.setTilesheetGeometry(this.geometry, 0, 1, 24, 4);
 }
 
-Player.texture = THREE.ImageUtils.loadTexture("media/player.png");
+Player.texture = bmacSdk.GEO.loadPixelTexture("media/player.png");
 
 // stores functions to call to check control states
 Player.controls =
