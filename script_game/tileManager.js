@@ -425,6 +425,12 @@ tileManager.prototype.update = function(){ //grow the jungle
 		this.growTiles();
 	}
 	
+	// call the tiles at the screen corners to force generation
+	this.getTileAtWorld(sampleGame.cameraController.getLeft(), sampleGame.cameraController.getTop());
+	this.getTileAtWorld(sampleGame.cameraController.getLeft(), sampleGame.cameraController.getBottom());
+	this.getTileAtWorld(sampleGame.cameraController.getRight(), sampleGame.cameraController.getTop());
+	this.getTileAtWorld(sampleGame.cameraController.getRight(), sampleGame.cameraController.getBottom());
+	
 	if (this.pathfindingNeedsUpdate){
 		this.updatePathfindingGraph();
 	}
