@@ -64,6 +64,7 @@ for (var c = 0; c < tileManager.textures.length; c++)
 	var texture = tileManager.textures[c];
 	if (texture.width !== undefined && texture.height !== undefined)
 	{
+		texture.isExtraSized = true;
 		tileManager.textures[c].geo = bmacSdk.GEO.makeSpriteGeo(texture.width, texture.height);
 		if (texture.offX || texture.offY)
 		{
@@ -89,7 +90,8 @@ var tile = function (terrainType, growthLevel, globalX, globalY){
 				]
 			];
 		this.terrainMesh = bmacSdk.GEO.makeSpriteMesh(texture.map, texture.geo);
-		this.terrainMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, -90);
+		//HACK: place textures that are not the default size above others
+		this.terrainMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, texture.isExtraSized?-89:-90);
 		GameEngine.scene.add(this.terrainMesh);
 	}
 	this.drawGrowth = function(){
@@ -188,6 +190,11 @@ var genStartingTileGroup = function(lTileX,lTileY){
 	placeNotInCenter(4);//iron
 	placeNotInCenter(4);
 
+	// place the village hall
+	tiles[15][14] = new tile(8, 0,(lTileX*lTileSize+15)-center,(lTileY*lTileSize+14)-center);
+	tiles[15][15] = new tile(9, 0,(lTileX*lTileSize+15)-center,(lTileY*lTileSize+15)-center);
+	tiles[14][15] = new tile(10, 0,(lTileX*lTileSize+14)-center,(lTileY*lTileSize+15)-center);
+	tiles[14][14] = new tile(11, 0,(lTileX*lTileSize+14)-center,(lTileY*lTileSize+14)-center);
 
 	for(var i = 0; i<lTileSize; i++){
 		for(var j = 0; j<lTileSize; j++){
@@ -199,12 +206,6 @@ var genStartingTileGroup = function(lTileX,lTileY){
 			}
 		}
 	}
-	
-	// place the village hall
-	tiles[15][14] = new tile(8, 0,(lTileX*lTileSize+15)-center,(lTileY*lTileSize+14)-center);
-	tiles[15][15] = new tile(9, 0,(lTileX*lTileSize+15)-center,(lTileY*lTileSize+15)-center);
-	tiles[14][15] = new tile(10, 0,(lTileX*lTileSize+14)-center,(lTileY*lTileSize+15)-center);
-	tiles[14][14] = new tile(11, 0,(lTileX*lTileSize+14)-center,(lTileY*lTileSize+14)-center);
 	
 	return tiles;
 }
@@ -241,20 +242,6 @@ tileManager.prototype.getTile = function(x, y){ // external 0,0 is largeTileRows
 		this.largeTileRows[lTileX][lTileY] = genTileGroup(lTileX,lTileY);
 	}
 	return this.largeTileRows[lTileX][lTileY][sTileX][sTileY]
-}
-
-tileManager.prototype.getTileTerrain = function(x, y){ // external 0,0 is largeTileRows[startingIndex][startingIndex][14][14]
-	var lTileX = Math.floor((center+x)/lTileSize)
-	var lTileY = Math.floor((center+y)/lTileSize)
-	var sTileX = (center+x)%lTileSize
-	var sTileY = (center+y)%lTileSize
-	if(lTileX<0||lTileY<0||lTileX>=(centerLTileIndex*2)+1||lTileY>=(centerLTileIndex*2)+1){
-		return "Here be Dragons. You've gone off the map."
-	}
-	if(this.largeTileRows[lTileX][lTileY] == null){
-		this.largeTileRows[lTileX][lTileY] = genTileGroup(lTileX,lTileY);
-	}
-	return terainKey[this.largeTileRows[lTileX][lTileY][sTileX][sTileY].terrainType].type;
 }
 
 tileManager.prototype.growTiles = function(){ //grow the jungle
