@@ -19,11 +19,14 @@ var terainKey = [ //growthChance = x/30
  {type:"food_hint", growthChance:5, textureIndex:[19,20]},
 ]
 var growthKey = [
- {type:"clear", pathWeight:2, speedMultiplier:1},
- {type:"light", pathWeight:1, speedMultiplier:0.66},
- {type:"medium", pathWeight:2, speedMultiplier:0.33},
- {type:"heavy", pathWeight:12, speedMultiplier:0.05},
+ {type:"clear", pathWeight:1, speedMultiplier:1, textureIndex:-1},
+ {type:"light", pathWeight:1, speedMultiplier:1, textureIndex:7},
+ {type:"medium", pathWeight:3, speedMultiplier:0.4, textureIndex:8},
+ {type:"medium", pathWeight:3, speedMultiplier:0.4, textureIndex:9},
+ {type:"heavy", pathWeight:7, speedMultiplier:0.2, textureIndex:21},
+ {type:"heavy", pathWeight:12, speedMultiplier:0.1, textureIndex:22},
 ]
+var growthMax = growthKey.length - 1;
 var centerLTileIndex = 3 //impies map total size
 var lTileSize = 30
 var center = (centerLTileIndex*lTileSize)+Math.floor(lTileSize/2)-1
@@ -31,7 +34,7 @@ var tilePixelWidth = 64
 var tilePixelHeight = 45
 
 tileManager = function(){
-	this.growCooldown = 4
+	this.growCooldown = 5
 	this.currentGrowCooldown = this.growCooldown
 
 	this.largeTileRows = []
@@ -65,6 +68,8 @@ tileManager.textures =
 	{map:bmacSdk.GEO.loadPixelTexture("media/ironhint2.png")},
 	{map:bmacSdk.GEO.loadPixelTexture("media/foodhint1.png")},
 	{map:bmacSdk.GEO.loadPixelTexture("media/foodhint2.png")}, //20
+	{map:bmacSdk.GEO.loadPixelTexture("media/growth4.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/growth5.png")},
 ]
 
 // initialize geometry for textures
@@ -91,7 +96,7 @@ for (var c = 0; c < tileManager.textures.length; c++)
 
 var tile = function (terrainType, growthLevel, globalX, globalY){
 	this.terrainType = ((terrainType != null) ? terrainType : 0);
-	this.growthLevel = ((growthLevel != null) ? growthLevel : 3);
+	this.growthLevel = ((growthLevel != null) ? growthLevel : 5);
 	
 	this.changeTerrain = function(index){
 		if (this.terrainMesh){
@@ -116,12 +121,12 @@ var tile = function (terrainType, growthLevel, globalX, globalY){
 	
 	this.drawGrowth = function(){
 		if (!this.growthMesh){
-			this.growthMesh = bmacSdk.GEO.makeSpriteMesh(tileManager.textures[6+this.growthLevel].map, tileManager.geo);
+			this.growthMesh = bmacSdk.GEO.makeSpriteMesh(tileManager.textures[growthKey[this.growthLevel].textureIndex].map, tileManager.geo);
 			this.growthMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, -30);
 			GameEngine.scene.add(this.growthMesh);
 		}
 		if (this.growthLevel > 0) {
-			this.growthMesh.material.map = tileManager.textures[6+this.growthLevel].map;
+			this.growthMesh.material.map = tileManager.textures[growthKey[this.growthLevel].textureIndex].map;
 			this.growthMesh.visible = true;
 		} else {
 			this.growthMesh.visible = false;
@@ -140,22 +145,22 @@ var genTileGroup = function(lTileX,lTileY){
 	}
 	if(lTileX == 0){ //block west
 		for(var y = 0; y<lTileSize; y++){
-			tiles[0][y] = new tile(7, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+			tiles[0][y] = new tile(7, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 		}
 	} 
 	if(lTileX == centerLTileIndex*2){ //block west
 		for(var y = 0; y<lTileSize; y++){
-			tiles[lTileSize-1][y] = new tile(7, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+			tiles[lTileSize-1][y] = new tile(7, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 		}
 	}
 	if(lTileY == 0){ //block north
 		for(var x = 0; x<lTileSize; x++){
-			tiles[x][0] = new tile(7, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+			tiles[x][0] = new tile(7, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 		}
 	}
 	if(lTileY == centerLTileIndex*2){ //block south
 		for(var x = 0; x<lTileSize; x++){
-			tiles[x][lTileSize-1] = new tile(7, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+			tiles[x][lTileSize-1] = new tile(7, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 		}
 	}
 	
@@ -164,19 +169,19 @@ var genTileGroup = function(lTileX,lTileY){
 			if(tiles[i][j] == null){ //fill tiles that are still empty
 				switch (Math.randomInt((lTileSize*lTileSize)/3)) { //on average 3 of each resource tile should be added to each tileGroup
 				  case 0:
-				  	tiles[i][j] = new tile(5, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+				  	tiles[i][j] = new tile(5, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				    break;
 				  case 1:
-				  	tiles[i][j] = new tile(3, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+				  	tiles[i][j] = new tile(3, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				    break;
 				  case 2:
-				  	tiles[i][j] = new tile(2, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+				  	tiles[i][j] = new tile(2, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				    break;
 				  case 3:
-				  	tiles[i][j] = new tile(4, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+				  	tiles[i][j] = new tile(4, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				    break;
 				  default:
-					tiles[i][j] = new tile(0,3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+					tiles[i][j] = new tile(0, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				    break;
 				}
 			}
@@ -199,7 +204,7 @@ var genStartingTileGroup = function(lTileX,lTileY){
 	   	var i = Math.randomInt(lTileSize);
 		var j = Math.randomInt(lTileSize);
 		} while (((i>10&&i<19)&&(j>10&&j<19)));
-		tiles[i][j] = new tile(type, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center); //food
+		tiles[i][j] = new tile(type, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center); //food
 	}
 	placeNotInCenter(5);//food
 	placeNotInCenter(5);
@@ -225,7 +230,7 @@ var genStartingTileGroup = function(lTileX,lTileY){
 				if ((i>10&&i<19)&&(j>10&&j<19)){
 					tiles[i][j] = new tile(0, 0,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				} else
-					tiles[i][j] = new tile(Math.randomInt(2),3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+					tiles[i][j] = new tile(Math.randomInt(2),growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 			}
 		}
 	}
@@ -340,7 +345,7 @@ var growTileGroup = function(tileGroup){ //doesnt currently grow accross tile gr
 	}//I hope this doesnt overly hurt performance. Without the copy sprouting based on a newly grown plant can occur
 	for(var i = 0; i<tileGroup.length; i++){
 		for(var j = 0; j<tileGroup[i].length; j++){
-			if(tileGroup[i][j].growthLevel>0 && tileGroup[i][j].growthLevel<3){ //grow
+			if(tileGroup[i][j].growthLevel>0 && tileGroup[i][j].growthLevel<growthMax){ //grow
 				tileGroup[i][j].growthLevel++;
 				tileGroup[i][j].drawGrowth()
 			}
