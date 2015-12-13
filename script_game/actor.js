@@ -120,10 +120,13 @@ Actor.prototype.update = function()
 	
 	// cap velocity moving in growth
 	var currentTile = sampleGame.tileManager.getTileAtWorld(this.transform.position.x, this.transform.position.y);
-	var growthSpeedMult = growthKey[currentTile.growthLevel].speedMultiplier;
-	if (growthSpeedMult > this.ignoreSpeedMultAbove) growthSpeedMult = 1;
-	velX *= growthSpeedMult;
-	velY *= growthSpeedMult;
+	if (currentTile instanceof tile)
+	{
+		var growthSpeedMult = growthKey[currentTile.growthLevel].speedMultiplier;
+		if (growthSpeedMult > this.ignoreSpeedMultAbove) growthSpeedMult = 1;
+		velX *= growthSpeedMult;
+		velY *= growthSpeedMult;
+	}
 	
 	// move based on the desired movement
 	this.transform.position.x += velX * bmacSdk.deltaSec;

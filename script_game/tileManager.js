@@ -375,8 +375,8 @@ tileManager.prototype.updatePathfindingGraph = function(){
 	//TODO: update weights in place if graph already exists
 	var weights = [];
 	// such nesting. much wow.
-	for (var lx=0; lx<centerLTileIndex*2+1; lx++){
-		for (var ly=0; ly<=centerLTileIndex*2+1; ly++){
+	for (var lx=0; lx<=centerLTileIndex*2; lx++){
+		for (var ly=0; ly<=centerLTileIndex*2; ly++){
 			for (var x=0; x<lTileSize; x++){
 				for (var y=0; y<lTileSize; y++){
 					var globalX = x + lx*lTileSize;
