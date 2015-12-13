@@ -41,19 +41,19 @@ VillagerManager.prototype.takeTask = function()
 	var task = undefined;
 	for (var c = 0; c < this.tasks.length; c++)
 	{
-		if (this.tasks[c].villagersAssigned === 0)
+		if (this.tasks[c].villagerAllowance > 0)
 		{
 			task = this.tasks[c];
 			break;
 		}
 	}
-	task.villagersAssigned++;
+	task.villagerAllowance--;
 	return task;
 }
 
 VillagerManager.prototype.freeTask = function(task)
 {
-	task.villagersAssigned--;
+	task.villagerAllowance++;
 }
 
 VillagerManager.prototype.findPath = function(fromX, fromY, toX, toY)
@@ -121,7 +121,7 @@ var ClearTileTask = function(x, y)
 {
 	this.x = x;
 	this.y = y;
-	this.villagersAssigned = 0;
+	this.villagerAllowance = 1;
 	
 	// priority is by proximity to village (0,0)
 	this.priority = Math.sqrt(this.x*this.x + this.y*this.y) / Math.sqrt(2 * VillagerManager.villageClearRadiusTiles * VillagerManager.villageClearRadiusTiles);
@@ -152,7 +152,7 @@ var ResourceTask = function(x, y)
 {
 	this.x = x;
 	this.y = y;
-	this.villagersAssigned = 0;
+	this.villagerAllowance = 2;
 	this.buildRoads = true;
 	
 	this.flagMesh = new THREE.Mesh(VillagerManager.flagGeometry, VillagerManager.flagMaterial);
@@ -173,7 +173,7 @@ ResourceTask.prototype.getActionIconIndex = function()
 
 ResourceTask.prototype.getPriority = function()
 {
-	return 100;
+	return 40;
 }
 
 
@@ -181,6 +181,7 @@ var ReturnResourceTask = function()
 {
 	this.x = 0;
 	this.y = 0;
+	this.villagerAllowance = 1;
 }
 
 ReturnResourceTask.prototype.getActionIconIndex = function()

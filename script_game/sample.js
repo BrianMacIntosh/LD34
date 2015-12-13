@@ -23,6 +23,8 @@ sampleGame.added = function()
 	this.villagerManager = new VillagerManager();
 	
 	this.cameraController = new CameraController(GameEngine.mainCamera);
+	
+	this.resources = new ResourceManager();
 };
 
 sampleGame.removed = function()

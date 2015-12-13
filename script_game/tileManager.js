@@ -1,20 +1,13 @@
 //A library to manage tiles
 
-var resourceKey = [
- {type:"stone"},
- {type:"wood"},
- {type:"iron"},
- {type:"food"},
- {type:"water"},
-]
 var terainKey = [ //growthChance = x/30
  {type:"neutral", growthChance:5, textureIndex:[0]},
  {type:"sandy", growthChance:3, textureIndex:[1]},
- {type:"stone", growthChance:1, textureIndex:[4,5], resource: 1},
- {type:"wood", growthChance:2, textureIndex:[], resource: 2},
- {type:"iron", growthChance:1, textureIndex:[2,3], resource: 3},
- {type:"food", growthChance:3, textureIndex:[10], resource: 4},
- {type:"water", growthChance:3, textureIndex:[6], resource: 5},
+ {type:"stone", growthChance:1, textureIndex:[4,5], resource: "stone"},
+ {type:"wood", growthChance:2, textureIndex:[], resource: "wood"},
+ {type:"iron", growthChance:1, textureIndex:[2,3], resource: "iron"},
+ {type:"food", growthChance:3, textureIndex:[10], resource: "food"},
+ {type:"water", growthChance:3, textureIndex:[6], resource: "water"},
  {type:"villageHall", growthChance:1, textureIndex:[]},
  {type:"rockBlock", growthChance:1, textureIndex:[]}
 ]
@@ -231,6 +224,23 @@ tileManager.prototype.growTiles = function(){ //grow the jungle
 		}
 	}
 	this.pathfindingNeedsUpdate = true;
+}
+
+tileManager.prototype.peek = function(){ //reduce all vines, debug tool
+	for (var lx=0; lx<this.largeTileRows.length; lx++){
+		if (this.largeTileRows[lx]){
+			for (var ly=0; ly<=this.largeTileRows[lx].length; ly++){
+				if (this.largeTileRows[lx][ly]){
+					for (var x=0; x<this.largeTileRows[lx][ly].length; x++){
+						for (var y=0; y<this.largeTileRows[lx][ly][x].length; y++){
+							this.largeTileRows[lx][ly][x][y].growthLevel = 1;
+							this.largeTileRows[lx][ly][x][y].drawGrowth();
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 var growTileGroup = function(tileGroup){ //doesnt currently grow accross tile groups

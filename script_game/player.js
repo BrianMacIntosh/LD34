@@ -60,6 +60,12 @@ Player.prototype = Object.create(Actor.prototype);
 
 Player.prototype.update = function()
 {
+	//DEBUG CHEAT
+	if (GameEngine.keyboard.keyPressed("p"))
+	{
+		sampleGame.tileManager.peek();
+	}
+	
 	// take input and set desired movement
 	if (Player.controls.left())
 	{
@@ -95,7 +101,7 @@ Player.prototype.update = function()
 			if (sampleGame.villagerManager.hasResourceFlagAt(tileX, tileY))
 			{
 				//TODO: resource name string
-				interactionMessage = "(X): Unflag " + resourceKey[resource].type;
+				interactionMessage = "(X): Unflag " + resource;
 				
 				if (Player.controls.interact())
 				{
@@ -105,7 +111,7 @@ Player.prototype.update = function()
 			else
 			{
 				//TODO: resource name string
-				interactionMessage = "(X): Flag " + resourceKey[resource].type + " for gathering";
+				interactionMessage = "(X): Flag " + resource + " for gathering";
 				
 				if (Player.controls.interact())
 				{
