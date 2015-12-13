@@ -1,8 +1,17 @@
-a:link { }
+a:link
+{
+color:aqua;
+}
 
-a:visited { }
+a:visited
+{
+color:MediumOrchid;
+}
 
-a:active { }
+a:active
+{
+color:aqua;
+}
 
 html
 {
