@@ -379,10 +379,10 @@ tileManager.prototype.updatePathfindingGraph = function(){
 		for (var ly=0; ly<=centerLTileIndex*2; ly++){
 			for (var x=0; x<lTileSize; x++){
 				for (var y=0; y<lTileSize; y++){
-					var globalX = x + lx*lTileSize;
-					var globalY = y + ly*lTileSize;
-					if (!weights[globalY]){
-						weights[globalY] = [];
+					var globalX = x + lx*lTileSize + 1; //HACK:+1, see below
+					var globalY = y + ly*lTileSize + 1; //HACK:+1, see below
+					if (!weights[globalX]){
+						weights[globalX] = [];
 					}
 					var tile = undefined;
 					if (this.largeTileRows[lx] && this.largeTileRows[lx][ly])
@@ -403,6 +403,20 @@ tileManager.prototype.updatePathfindingGraph = function(){
 			}
 		}
 	}
+	
+	//HACK: create extra rows at negative edges so things line up
+	if (!weights[0]){weights[0]=[]};
+	for (var lx=0; lx<=centerLTileIndex*2; lx++){
+		for (var x=0; x<lTileSize; x++){
+			weights[x + lx*lTileSize][0] = 0;
+		}
+	}
+	for (var ly=0; ly<=centerLTileIndex*2; ly++){
+		for (var y=0; y<lTileSize; y++){
+			weights[0][y + ly*lTileSize] = 0;
+		}
+	}
+	
 	this.pathfindingGraph = new Graph(weights);
 	this.pathfindingNeedsUpdate = false;
 }
