@@ -278,19 +278,21 @@ tileManager.prototype.updatePathfindingGraph = function(){
 	//TODO: update weights in place if graph already exists
 	var weights = [];
 	// such nesting. much wow.
-	for (var lx=0; lx<this.largeTileRows.length; lx++){
-		if (this.largeTileRows[lx]){
-			for (var ly=0; ly<=this.largeTileRows[lx].length; ly++){
-				if (this.largeTileRows[lx][ly]){
-					for (var x=0; x<this.largeTileRows[lx][ly].length; x++){
-						for (var y=0; y<this.largeTileRows[lx][ly][x].length; y++){
-							if (!weights[y]){
-								weights[y] = [];
-							}
-							var tile = this.largeTileRows[lx][ly][x][y];
-							weights[y][x] = tile ? growthKey[tile.growthLevel].pathWeight : 0;
-						}
+	for (var lx=0; lx<centerLTileIndex*2+1; lx++){
+		for (var ly=0; ly<=centerLTileIndex*2+1; ly++){
+			for (var x=0; x<lTileSize; x++){
+				for (var y=0; y<lTileSize; y++){
+					var globalX = x + lx*lTileSize;
+					var globalY = y + ly*lTileSize;
+					if (!weights[globalY]){
+						weights[globalY] = [];
 					}
+					var tile = undefined;
+					if (this.largeTileRows[lx] && this.largeTileRows[lx][ly])
+					{
+						tile = this.largeTileRows[lx][ly][x][y];
+					}
+					weights[globalY][globalX] = tile ? growthKey[tile.growthLevel].pathWeight : 0;
 				}
 			}
 		}

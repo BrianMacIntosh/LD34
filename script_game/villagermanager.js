@@ -22,7 +22,7 @@ VillagerManager.flagMaterial = new THREE.MeshBasicMaterial({ map:THREE.ImageUtil
 VillagerManager.flagGeometry = bmacSdk.GEO.makeSpriteGeo(64,82);
 
 // radius around village in which villagers should keep foliage clear
-VillagerManager.villageClearRadiusTiles = 4;
+VillagerManager.villageClearRadiusTiles = 5;
 VillagerManager.maxVillageClearPriority = 50;
 
 VillagerManager.prototype.update = function()
@@ -63,13 +63,13 @@ VillagerManager.prototype.findPath = function(fromX, fromY, toX, toY)
 	
 	// the graph doesn't contain negative tiles (it's offset)
 	// so offset the input data
-	var centerOffset = Math.floor(lTileSize/2)-1;
+	var centerOffset = lTileSize * (centerLTileIndex + 0.5);
 	fromX += centerOffset;
 	fromY += centerOffset;
 	toX += centerOffset;
-	toY += centerOffset; //HACK: center offset
+	toY += centerOffset;
 	
-	console.log("(" + fromX + "," + fromY + ")->(" + toX + "," + toY + ")");
+	//console.log("(" + fromX + "," + fromY + ")->(" + toX + "," + toY + ")");
 	
 	var graph = sampleGame.tileManager.pathfindingGraph;
 	var start = graph.grid[fromX][fromY];
@@ -123,8 +123,10 @@ var ClearTileTask = function(x, y)
 	this.y = y;
 	this.villagerAllowance = 1;
 	
-	// priority is by proximity to village (0,0)
-	this.priority = Math.sqrt(this.x*this.x + this.y*this.y) / Math.sqrt(2 * VillagerManager.villageClearRadiusTiles * VillagerManager.villageClearRadiusTiles);
+	// priority is by proximity to village center (0.5,0.5)
+	var deltaX = this.x;
+	var deltaY = this.y;
+	this.priority = Math.sqrt(deltaX*deltaX+deltaY*deltaY) / Math.sqrt(2 * VillagerManager.villageClearRadiusTiles * VillagerManager.villageClearRadiusTiles);
 	if (this.priority < 0 || this.priority > 1) console.error("Goofed up math.");
 	this.priority = VillagerManager.maxVillageClearPriority * (1 - this.priority);
 }

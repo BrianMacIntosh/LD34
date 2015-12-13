@@ -70,8 +70,8 @@ Villager.prototype.update = function()
 	var destination = undefined;
 	if (this.path && this.path.length > 0)
 	{
-		var centerOffset = Math.floor(lTileSize/2)-1;
-		destination = { //HACK: centering
+		var centerOffset = lTileSize * (centerLTileIndex + 0.5);;
+		destination = {
 			x:(this.path[0].x-centerOffset) * tilePixelWidth,
 			y:(this.path[0].y-centerOffset) * tilePixelHeight
 		};

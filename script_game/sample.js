@@ -42,28 +42,22 @@ sampleGame.update = function()
 
 sampleGame.getWorldBoundsMinX = function()
 {
-	return (-0.5) * lTileSize * tilePixelWidth + tilePixelWidth / 2;
+	return -(centerLTileIndex + 0.5) * lTileSize * tilePixelWidth + tilePixelWidth / 2;
 };
 
 sampleGame.getWorldBoundsMaxX = function()
 {
-	return (this.tileManager.largeTileRows.length - 0.5) * lTileSize * tilePixelWidth + tilePixelWidth / 2;
+	return (centerLTileIndex + 0.5) * lTileSize * tilePixelWidth + tilePixelWidth / 2;
 };
 
 sampleGame.getWorldBoundsMinY = function()
 {
-	return (-0.5) * lTileSize * tilePixelHeight + tilePixelHeight / 2;
+	return -(centerLTileIndex + 0.5) * lTileSize * tilePixelHeight + tilePixelHeight / 2;
 };
 
 sampleGame.getWorldBoundsMaxY = function()
 {
-	// use maximum size of any column
-	var maxColumnSize = 0;
-	for (var c = 0; c < this.tileManager.largeTileRows.length; c++)
-	{
-		maxColumnSize = Math.max(maxColumnSize, this.tileManager.largeTileRows[c].length);
-	}
-	return (maxColumnSize - 0.5) * lTileSize * tilePixelHeight + tilePixelHeight / 2;
+	return (centerLTileIndex + 0.5) * lTileSize * tilePixelHeight + tilePixelHeight / 2;
 };
 
 GameEngine.addObject(sampleGame);
