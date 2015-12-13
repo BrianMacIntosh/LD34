@@ -93,6 +93,27 @@ void main(void)
 
 <body onload="bmacSdk._attachDom()">
 <!--<div id="homediv"><a href="/" target="_blank"><img src="/media/title_penguin.png" height="64" alt="Penguin in a TV"/></a></div>-->
+<div id="outer" style="width:100%; align-items: center">  
+  <div id="resourceDiv" style="height: 36px; width: 496px; margin: 0 auto;">
+	  <div id="foodDiv" style="float: left; height: 32px; width:120px; border: 2px solid black; margin: 0 auto; display: flex; align-items: center">
+	  	<img src="media/foodIcon.png" alt="Food Icon">
+	  	Food: <span id="foodCount" align="center" style="color:green; width: 100%;">0</span>
+	  </div>
+	  <div id="woodDiv" style="float: left; height: 32px; width:120px; border: 2px solid black; margin: 0 auto; display: flex; align-items: center">
+	  	<img src="media/woodIcon.png" alt="Wood Icon">
+	  	Wood: <span id="woodCount" align="center" style="color:green; width: 100%;">0</span>
+	  </div>
+	  <div id="stoneDiv" style="float:left;height: 32px; width:120px; border: 2px solid black; margin: 0 auto; display: flex; align-items: center">
+	  	<img src="media/stoneIcon.png" alt="Stone Icon">
+	  	Stone: <span id="stoneCount" align="center" style="color:green; width: 100%;">0</span>
+	  </div>
+	  <div id="ironDiv" style="float:left; height: 32px; width:120px; border: 2px solid black; margin: 0 auto; display: flex; align-items: center">
+	  	<img src="media/ironIcon.png" alt="Iron Icon">
+	  	Iron: <span id="ironCount" align="center" style="color:green; width: 100%;">0</span>
+	  </div>
+  </div>
+</div>
+
 <div id="canvasDiv">
 <noscript>You need Javascript enabled to play the game!</noscript>
 <div id="interactionMessage"></div>

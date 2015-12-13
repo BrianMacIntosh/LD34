@@ -19,6 +19,8 @@ sampleGame.added = function()
 	GameEngine.addObject(this.player);
 
 	this.tileManager = new tileManager();
+
+	this.resourceManager = new ResourceManager();
 	
 	this.villagerManager = new VillagerManager();
 	
@@ -37,6 +39,8 @@ sampleGame.update = function()
 	this.villagerManager.update();
 	this.cameraController.update();
 	this.tileManager.update();
+	this.resourceManager.update();
+
 
 };
 
