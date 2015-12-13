@@ -46,8 +46,8 @@ var updateCount = function(elementId, value){
 	var element = document.getElementById(elementId);
 	element.innerHTML = value;
 	if(value<3){
-		element.style.color = 'red';
+		element.style.color = 'indianred';
 	} else {
-		element.style.color = 'black';
+		element.style.color = 'white';
 	}
 }

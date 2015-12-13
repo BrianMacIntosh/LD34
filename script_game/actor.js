@@ -53,6 +53,13 @@ Actor.macheteSounds =
 [
 	"media/118792__lmbubec__1-knife-slash-a.wav"
 ];
+	
+Actor.rustleSounds=
+[
+	"media/223160__yoyodaman234__grass-footstep-2.wav",
+	"media/223159__yoyodaman234__grass-footstep-3.wav",
+	"media/223169__yoyodaman234__grass-footstep-4.wav",
+];
 
 // multiplier on Y movement to account for the iso camera angle
 Actor.yMotionMultiplier = 1 / Math.sqrt(2);
@@ -260,12 +267,15 @@ Actor.prototype.swingMachete = function()
 		// execute machete swing
 		this.queueSwingMachete = false;
 		
+		var didHit = false;
+		
 		// try to hit the tile I am on
 		var myTile = sampleGame.tileManager.getTileAtWorld(this.transform.position.x, this.transform.position.y);
 		if (myTile.growthLevel > 0)
 		{
 			myTile.growthLevel = Math.max(0, myTile.growthLevel - this.macheteDamage);
 			myTile.drawGrowth();
+			didHit = true;
 		}
 		
 		// try to hit the tile I am facing
@@ -276,6 +286,7 @@ Actor.prototype.swingMachete = function()
 		{
 			myTile.growthLevel = Math.max(0, myTile.growthLevel - this.macheteDamage);
 			myTile.drawGrowth();
+			didHit = true;
 		}
 	
 		//TODO: also try to hit things slightly to the left and right
@@ -284,7 +295,14 @@ Actor.prototype.swingMachete = function()
 		this.slashMesh1.visible = this.slashAlternatingState;
 		this.slashTimer = 0;
 		
-		//AUDIOMANAGER.playSound(Actor.macheteSounds);
+		if (this.isPlayer)
+		{
+			sampleGame.playSoundFallOff(Actor.macheteSounds, 0.13, this.transform.position);
+		}
+		if (didHit)
+		{
+			sampleGame.playSoundFallOff(Actor.rustleSounds, this.isPlayer ? 0.6 : 0.15, this.transform.position);
+		}
 		
 		this.slashAlternatingState = !this.slashAlternatingState;
 		this.currentMacheteCooldown = this.macheteCooldown;

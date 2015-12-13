@@ -92,24 +92,31 @@ void main(void)
 </head>
 
 <body onload="bmacSdk._attachDom()">
+
+<div id="settings">
+<input type="checkbox" id="musicMute" onchange="sampleGame.updateVolume()" checked>Mute Music</input><br>
+<input type="checkbox" id="soundMute" onchange="sampleGame.updateVolume()">Mute Sound</input>
+</div>
+
 <!--<div id="homediv"><a href="/" target="_blank"><img src="/media/title_penguin.png" height="64" alt="Penguin in a TV"/></a></div>-->
-<div id="outer" style="width:100%; align-items: center">  
-  <div id="resourceDiv" style="height: 36px; width: 496px; margin: 0 auto;">
-	  <div id="foodDiv" style="float: left; height: 32px; width:120px; border: 2px solid black; margin: 0 auto; display: flex; align-items: center">
+
+<div id="outer" style="width:100%; align-items: center;margin-top:10px">  
+  <div id="resourceDiv" style="height: 36px; width: 496px; margin: 0 auto; color:white;">
+	  <div id="foodDiv" style="float: left; height: 32px; width:120px; border: 2px solid grey; margin: 0 auto; display: flex; align-items: center">
 	  	<img src="media/foodIcon.png" alt="Food Icon">
-	  	Food: <span id="foodCount" align="center" style="color:green; width: 100%;">0</span>
+	  	Food: <span id="foodCount" align="center" style="color:indianred; width: 100%;">0</span>
 	  </div>
-	  <div id="woodDiv" style="float: left; height: 32px; width:120px; border: 2px solid black; margin: 0 auto; display: flex; align-items: center">
+	  <div id="woodDiv" style="float: left; height: 32px; width:120px; border: 2px solid grey; margin: 0 auto; display: flex; align-items: center">
 	  	<img src="media/woodIcon.png" alt="Wood Icon">
-	  	Wood: <span id="woodCount" align="center" style="color:green; width: 100%;">0</span>
+	  	Wood: <span id="woodCount" align="center" style="color:indianred; width: 100%;">0</span>
 	  </div>
-	  <div id="stoneDiv" style="float:left;height: 32px; width:120px; border: 2px solid black; margin: 0 auto; display: flex; align-items: center">
+	  <div id="stoneDiv" style="float:left;height: 32px; width:120px; border: 2px solid grey; margin: 0 auto; display: flex; align-items: center">
 	  	<img src="media/stoneIcon.png" alt="Stone Icon">
-	  	Stone: <span id="stoneCount" align="center" style="color:green; width: 100%;">0</span>
+	  	Stone: <span id="stoneCount" align="center" style="color:indianred; width: 100%;">0</span>
 	  </div>
-	  <div id="ironDiv" style="float:left; height: 32px; width:120px; border: 2px solid black; margin: 0 auto; display: flex; align-items: center">
+	  <div id="ironDiv" style="float:left; height: 32px; width:120px; border: 2px solid grey; margin: 0 auto; display: flex; align-items: center">
 	  	<img src="media/ironIcon.png" alt="Iron Icon">
-	  	Iron: <span id="ironCount" align="center" style="color:green; width: 100%;">0</span>
+	  	Iron: <span id="ironCount" align="center" style="color:indianred; width: 100%;">0</span>
 	  </div>
   </div>
 </div>
@@ -124,6 +131,9 @@ void main(void)
 </div>
 <div id="interactionMessage"></div>
 </div>
+
+<div id="footer">
+A game by Brian MacIntosh and Lucas Colvin for <a href="http://ludumdare.com/compo/ludum-dare-34">LD#34</a>. Music by <a href="http://www.soundclick.com/bands/default.cfm?bandID=1236552">NGXmusical</a>.
 </body>
 
 </html>

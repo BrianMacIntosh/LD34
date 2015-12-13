@@ -34,7 +34,7 @@ var tilePixelWidth = 64
 var tilePixelHeight = 45
 
 tileManager = function(){
-	this.growCooldown = 5
+	this.growCooldown = 4.5
 	this.currentGrowCooldown = this.growCooldown
 
 	this.largeTileRows = []
