@@ -19,6 +19,11 @@ var VillagerManager = function()
 }
 
 VillagerManager.flagMaterial = new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture("media/flag.png"), transparent:true });
+VillagerManager.foodFlagMaterial = new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture("media/foodflag.png"), transparent:true });
+VillagerManager.woodFlagMaterial = new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture("media/woodflag.png"), transparent:true });
+VillagerManager.ironFlagMaterial = new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture("media/ironflag.png"), transparent:true });
+VillagerManager.stoneFlagMaterial = new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture("media/stoneflag.png"), transparent:true });
+
 VillagerManager.flagGeometry = bmacSdk.GEO.makeSpriteGeo(64,82);
 
 // radius around village in which villagers should keep foliage clear
@@ -157,10 +162,28 @@ var ResourceTask = function(x, y)
 	this.villagerAllowance = 2;
 	this.buildRoads = true;
 	
-	this.flagMesh = new THREE.Mesh(VillagerManager.flagGeometry, VillagerManager.flagMaterial);
+	terrain = sampleGame.tileManager.getTileTerrain(x, y);
+	switch (terrain) {
+	  case "food":
+	  	this.flagMesh = new THREE.Mesh(VillagerManager.flagGeometry, VillagerManager.foodFlagMaterial);
+	    break;
+	  case "wood":
+	  	this.flagMesh = new THREE.Mesh(VillagerManager.flagGeometry, VillagerManager.woodFlagMaterial);
+	    break;
+	  case "stone":
+	  	this.flagMesh = new THREE.Mesh(VillagerManager.flagGeometry, VillagerManager.stoneFlagMaterial);
+	    break;
+	  case "iron":
+	  	this.flagMesh = new THREE.Mesh(VillagerManager.flagGeometry, VillagerManager.ironFlagMaterial);
+	    break;
+	  default:
+	  	this.flagMesh = new THREE.Mesh(VillagerManager.flagGeometry, VillagerManager.flagMaterial);
+	    break;
+	}
 	GameEngine.scene.add(this.flagMesh);
 	this.flagMesh.position.set(sampleGame.tileManager.tileToWorldX(this.x),
 		sampleGame.tileManager.tileToWorldY(this.y) - 41, -20);
+	
 }
 
 ResourceTask.prototype.destroy = function()
