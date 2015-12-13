@@ -128,6 +128,9 @@ var tile = function (terrainType, growthLevel, globalX, globalY){
 			this.growthMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, -30);
 			GameEngine.scene.add(this.growthMesh);
 		}
+		if (this.terrainMesh){
+			this.terrainMesh.visible = this.growthLevel < growthMax;
+		}
 		if (this.growthLevel > 0) {
 			this.growthMesh.material.map = tileManager.textures[growthKey[this.growthLevel].textureIndex].map;
 			this.growthMesh.visible = true;
