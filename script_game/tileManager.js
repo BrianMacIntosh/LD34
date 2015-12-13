@@ -16,7 +16,7 @@ var terainKey = [ //growthChance = x/30
  {type:"stone_hint", growthChance:5, textureIndex:[15,16]},
  {type:"wood_hint", growthChance:5, textureIndex:[0]},
  {type:"iron_hint", growthChance:5, textureIndex:[17,18]},
- {type:"food_hint", growthChance:5, textureIndex:[0]},
+ {type:"food_hint", growthChance:5, textureIndex:[19,20]},
 ]
 var growthKey = [
  {type:"clear", pathWeight:2, speedMultiplier:1},
@@ -63,6 +63,8 @@ tileManager.textures =
 	{map:bmacSdk.GEO.loadPixelTexture("media/stonehint2.png")},
 	{map:bmacSdk.GEO.loadPixelTexture("media/ironhint1.png")},
 	{map:bmacSdk.GEO.loadPixelTexture("media/ironhint2.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/foodhint1.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/foodhint2.png")}, //20
 ]
 
 // initialize geometry for textures
