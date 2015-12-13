@@ -2,11 +2,13 @@
 var Actor = function()
 {
 	this.maxMovementSpeed = 60;
-	this.slashSpeedReduction = 0.65; //speed is capped at max times this when slashing
+	this.slashSpeedReduction = 0.5; //speed is capped at max times this when slashing
 	this.acceleration = 256;
 	this.macheteCooldown = 0.4;
+	this.macheteDamage = 1;
 	this.slashAlternatingState = false;
 	this.slashTimer = 0;
+	this.ignoreSpeedMultAbove = 1;
 	
 	this.currentMacheteCooldown = 0;
 	this.queueSwingMachete = false;
@@ -106,6 +108,9 @@ Actor.prototype.update = function()
 	var velX = this.velocity.x;
 	var velY = this.velocity.y;
 	
+	var lastPosX = this.transform.position.x;
+	var lastPosY = this.transform.position.y;
+	
 	// cap velocity while slashing
 	if (this.slashTimer <= this.macheteCooldown)
 	{
@@ -115,15 +120,58 @@ Actor.prototype.update = function()
 	
 	// cap velocity moving in growth
 	var currentTile = sampleGame.tileManager.getTileAtWorld(this.transform.position.x, this.transform.position.y);
-	velX *= growthKey[currentTile.growthLevel].speedMultiplier;
-	velY *= growthKey[currentTile.growthLevel].speedMultiplier;
+	var growthSpeedMult = growthKey[currentTile.growthLevel].speedMultiplier;
+	if (growthSpeedMult > this.ignoreSpeedMultAbove) growthSpeedMult = 1;
+	velX *= growthSpeedMult;
+	velY *= growthSpeedMult;
 	
 	// move based on the desired movement
 	this.transform.position.x += velX * bmacSdk.deltaSec;
 	this.transform.position.y += velY * bmacSdk.deltaSec * Actor.yMotionMultiplier;
 	
+	// if we moved into a blocked tile, move back
+	/*var newTileX = sampleGame.tileManager.worldToTileX(this.transform.position.x);
+	var newTileY = sampleGame.tileManager.worldToTileY(this.transform.position.y);
+	var newTile = sampleGame.tileManager.getTile(newTileX, newTileY);
+	if (newTile != currentTile && terainKey[newTile.terrainType].blocking)
+	{
+		var tileLeft = sampleGame.tileManager.tileToWorldX(newTileX) - tilePixelWidth/2;
+		var tileRight = tileLeft + tilePixelWidth;
+		var tileTop = sampleGame.tileManager.tileToWorldY(newTileY) - tilePixelHeight;
+		var tileBottom = tileTop + tilePixelHeight;
+		
+		//top
+		//console.log(tileLeft + "," + tileTop + " / " + tileRight + "," + tileBottom);
+		//console.log(lastPosX + "," + lastPosY + " / " + this.transform.position.x + "," + this.transform.position.y);
+		if (lineIntersection(lastPosX, lastPosY, this.transform.position.x, this.transform.position.y,
+			tileLeft, tileTop, tileRight, tileTop))
+		{
+			this.transform.position.y = tileTop-0.1;
+		}
+		
+		//bottom
+		if (lineIntersection(lastPosX, lastPosY, this.transform.position.x, this.transform.position.y,
+			tileLeft, tileBottom, tileRight, tileBottom))
+		{
+			this.transform.position.y = tileBottom+0.1;
+		}
+		
+		//left
+		if (lineIntersection(lastPosX, lastPosY, this.transform.position.x, this.transform.position.y,
+			tileLeft, tileTop, tileLeft, tileBottom))
+		{
+			this.transform.position.x = tileLeft-0.1;
+		}
+		
+		//right
+		if (lineIntersection(lastPosX, lastPosY, this.transform.position.x, this.transform.position.y,
+			tileRight, tileTop, tileRight, tileBottom))
+		{
+			this.transform.position.x = tileRight+0.1;
+		}
+	}*/
+	
 	// restrict in bounds
-	//TODO: unify with other collision code?
 	this.transform.position.x = Math.clamp(this.transform.position.x, sampleGame.getWorldBoundsMinX(), sampleGame.getWorldBoundsMaxX());
 	this.transform.position.y = Math.clamp(this.transform.position.y, sampleGame.getWorldBoundsMinY(), sampleGame.getWorldBoundsMaxY());
 	
@@ -209,35 +257,25 @@ Actor.prototype.swingMachete = function()
 		// execute machete swing
 		this.queueSwingMachete = false;
 		
-		// first try to hit the tile I am on
-		var targetTile = undefined;
+		// try to hit the tile I am on
 		var myTile = sampleGame.tileManager.getTileAtWorld(this.transform.position.x, this.transform.position.y);
 		if (myTile.growthLevel > 0)
 		{
-			targetTile = myTile;
+			myTile.growthLevel = Math.max(0, myTile.growthLevel - this.macheteDamage);
+			myTile.drawGrowth();
 		}
 		
-		// if there's nothing there, try to hit the tile I am facing
-		if (!targetTile)
+		// try to hit the tile I am facing
+		myTile = sampleGame.tileManager.getTileAtWorld(
+			this.transform.position.x + this.getFacingX() * tilePixelWidth,
+			this.transform.position.y + this.getFacingY() * tilePixelHeight);
+		if (myTile.growthLevel > 0)
 		{
-			myTile = sampleGame.tileManager.getTileAtWorld(
-				this.transform.position.x + this.getFacingX() * tilePixelWidth,
-				this.transform.position.y + this.getFacingY() * tilePixelHeight);
-			if (myTile.growthLevel > 0)
-			{
-				targetTile = myTile;
-			}
+			myTile.growthLevel = Math.max(0, myTile.growthLevel - this.macheteDamage);
+			myTile.drawGrowth();
 		}
-		
+	
 		//TODO: also try to hit things slightly to the left and right
-		
-		// hit the target
-		if (targetTile)
-		{
-			targetTile.growthLevel = Math.max(0, targetTile.growthLevel - 2);
-			targetTile.drawGrowth();
-			sampleGame.tileManager.pathfindingNeedsUpdate = true;
-		}
 		
 		this.slashMesh0.visible = !this.slashAlternatingState;
 		this.slashMesh1.visible = this.slashAlternatingState;

@@ -17,3 +17,20 @@ CameraController.prototype.update = function()
 	this.camera.position.y = Math.clamp(this.camera.position.y,
 		sampleGame.getWorldBoundsMinY(), sampleGame.getWorldBoundsMaxY() - GameEngine.screenHeight);
 }
+
+CameraController.prototype.getLeft = function()
+{
+	return this.camera.position.x;
+}
+CameraController.prototype.getTop = function()
+{
+	return this.camera.position.y;
+}
+CameraController.prototype.getRight = function()
+{
+	return this.camera.position.x + GameEngine.screenWidth;
+}
+CameraController.prototype.getBottom = function()
+{
+	return this.camera.position.y + GameEngine.screenHeight;
+}

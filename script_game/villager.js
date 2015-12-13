@@ -4,6 +4,7 @@ var Villager = function()
 	Actor.call(this);
 	
 	this.acceleration = 99999;
+	this.slashSpeedReduction = 0.1;
 	
 	this.transform.position.set(-50, 0, 0);
 	this.status = {
@@ -116,8 +117,8 @@ Villager.prototype.update = function()
 	if (!tile || tile.growthLevel == 0)
 	{
 		tile = sampleGame.tileManager.getTileAtWorld(
-			this.transform.position.x + this.getFacingX() * tilePixelWidth,
-			this.transform.position.y + this.getFacingY() * tilePixelHeight);
+			this.transform.position.x + this.getFacingX() * tilePixelWidth * 0.25,
+			this.transform.position.y + this.getFacingY() * tilePixelHeight * 0.25);
 	}
 	if (tile && tile.growthLevel > 0)
 	{
@@ -145,11 +146,13 @@ Villager.prototype.update = function()
 		{
 			if (this.path && this.path.length > 0)
 			{
-				this.path.splice(0, 1);
+				//repath
+				this.pathToLocation(this.task.x, this.task.y);
+				/*this.path.splice(0, 1);
 				if (this.path.length <= 0)
 				{
 					this.path = undefined;
-				}
+				}*/
 			}
 		}
 	}

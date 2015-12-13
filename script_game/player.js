@@ -7,6 +7,7 @@ var Player = function()
 	
 	this.maxMovementSpeed = 100;
 	this.acceleration = 512;
+	this.ignoreSpeedMultAbove = 0.15;
 	
 	// create mesh
 	this.geometry = bmacSdk.GEO.makeSpriteGeo(24,32);
@@ -96,7 +97,7 @@ Player.prototype.update = function()
 	if (currentTile)
 	{
 		var resource = terainKey[currentTile.terrainType].resource;
-		if (resource !== undefined && currentTile.growthLevel < 3)
+		if (resource !== undefined && currentTile.growthLevel < growthMax)
 		{
 			if (sampleGame.villagerManager.hasResourceFlagAt(tileX, tileY))
 			{

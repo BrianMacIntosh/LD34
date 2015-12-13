@@ -3,23 +3,30 @@
 var terainKey = [ //growthChance = x/30
  {type:"neutral", growthChance:5, textureIndex:[0]},
  {type:"sandy", growthChance:3, textureIndex:[1]},
- {type:"stone", growthChance:1, textureIndex:[4,5], resource: "stone"},
- {type:"wood", growthChance:2, textureIndex:[], resource: "wood"},
- {type:"iron", growthChance:1, textureIndex:[2,3], resource: "iron"},
- {type:"food", growthChance:3, textureIndex:[10], resource: "food"},
+ {type:"stone", growthChance:1, textureIndex:[4,5], resource: "stone", hint:12},
+ {type:"wood", growthChance:2, textureIndex:[], resource: "wood", hint:13},
+ {type:"iron", growthChance:1, textureIndex:[2,3], resource: "iron", hint:14},
+ {type:"food", growthChance:3, textureIndex:[10], resource: "food", hint:15},
  {type:"water", growthChance:3, textureIndex:[6], resource: "water"},
  {type:"rockBlock", growthChance:1, textureIndex:[], blocking: true},
  {type:"villageHall_ne", growthChance:1, textureIndex:[11], blocking: true},
  {type:"villageHall_se", growthChance:1, textureIndex:[12], blocking: true},
- {type:"villageHall_sw", growthChance:1, textureIndex:[13], blocking: true},
+ {type:"villageHall_sw", growthChance:1, textureIndex:[13], blocking: true}, //10
  {type:"villageHall_nw", growthChance:1, textureIndex:[14], blocking: true},
+ {type:"stone_hint", growthChance:5, textureIndex:[15,16]},
+ {type:"wood_hint", growthChance:5, textureIndex:[0]},
+ {type:"iron_hint", growthChance:5, textureIndex:[17,18]},
+ {type:"food_hint", growthChance:5, textureIndex:[19,20]},
 ]
 var growthKey = [
- {type:"clear", pathWeight:2, speedMultiplier:1},
- {type:"light", pathWeight:1, speedMultiplier:0.66},
- {type:"medium", pathWeight:2, speedMultiplier:0.33},
- {type:"heavy", pathWeight:12, speedMultiplier:0.05},
+ {type:"clear", pathWeight:1, speedMultiplier:1, textureIndex:-1},
+ {type:"light", pathWeight:1, speedMultiplier:1, textureIndex:7},
+ {type:"medium", pathWeight:3, speedMultiplier:0.4, textureIndex:8},
+ {type:"medium", pathWeight:3, speedMultiplier:0.4, textureIndex:9},
+ {type:"heavy", pathWeight:7, speedMultiplier:0.2, textureIndex:21},
+ {type:"heavy", pathWeight:12, speedMultiplier:0.1, textureIndex:22},
 ]
+var growthMax = growthKey.length - 1;
 var centerLTileIndex = 3 //impies map total size
 var lTileSize = 30
 var center = (centerLTileIndex*lTileSize)+Math.floor(lTileSize/2)-1
@@ -27,7 +34,7 @@ var tilePixelWidth = 64
 var tilePixelHeight = 45
 
 tileManager = function(){
-	this.growCooldown = 4
+	this.growCooldown = 5
 	this.currentGrowCooldown = this.growCooldown
 
 	this.largeTileRows = []
@@ -55,6 +62,14 @@ tileManager.textures =
 	{map:bmacSdk.GEO.loadPixelTexture("media/villagehall_se.png"),width:105,height:119,offX:(105-tilePixelWidth)/2,offY:-18},
 	{map:bmacSdk.GEO.loadPixelTexture("media/villagehall_sw.png"),width:64,height:119,offY:-18},
 	{map:bmacSdk.GEO.loadPixelTexture("media/villagehall_nw.png"),width:64,height:95,offY:-(95-tilePixelHeight)/2},
+	{map:bmacSdk.GEO.loadPixelTexture("media/stonehint1.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/stonehint2.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/ironhint1.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/ironhint2.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/foodhint1.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/foodhint2.png")}, //20
+	{map:bmacSdk.GEO.loadPixelTexture("media/growth4.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/growth5.png")},
 ]
 
 // initialize geometry for textures
@@ -81,29 +96,40 @@ for (var c = 0; c < tileManager.textures.length; c++)
 
 var tile = function (terrainType, growthLevel, globalX, globalY){
 	this.terrainType = ((terrainType != null) ? terrainType : 0);
-	this.growthLevel = ((growthLevel != null) ? growthLevel : 3);
+	this.growthLevel = ((growthLevel != null) ? growthLevel : 5);
 	this.getTerrainType = function(){
 		return terainKey[terrainType].type;
 	}
-	if(terainKey[terrainType].textureIndex.length != 0 && globalX != null){
-		var texture = tileManager.textures[
-				terainKey[terrainType].textureIndex[
-					Math.randomInt(terainKey[terrainType].textureIndex.length)
-				]
-			];
-		this.terrainMesh = bmacSdk.GEO.makeSpriteMesh(texture.map, texture.geo);
-		//HACK: place textures that are not the default size above others
-		this.terrainMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, texture.isExtraSized?-89:-90);
-		GameEngine.scene.add(this.terrainMesh);
+
+	this.changeTerrain = function(index){
+		if (this.terrainMesh){
+			GameEngine.scene.remove(this.terrainMesh);
+		}
+		if(terainKey[terrainType].textureIndex.length != 0 && globalX != null){
+			var texture = tileManager.textures[
+					terainKey[index].textureIndex[
+						Math.randomInt(terainKey[index].textureIndex.length)
+					]
+				];
+			if (texture){
+				this.terrainMesh = bmacSdk.GEO.makeSpriteMesh(texture.map, texture.geo);
+				//HACK: place textures that are not the default size above others
+				this.terrainMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, texture.isExtraSized?-89:-90);
+				GameEngine.scene.add(this.terrainMesh);
+			}
+		}
 	}
+	
+	this.changeTerrain(terrainType);
+	
 	this.drawGrowth = function(){
 		if (!this.growthMesh){
-			this.growthMesh = bmacSdk.GEO.makeSpriteMesh(tileManager.textures[6+this.growthLevel].map, tileManager.geo);
+			this.growthMesh = bmacSdk.GEO.makeSpriteMesh(tileManager.textures[growthKey[this.growthLevel].textureIndex].map, tileManager.geo);
 			this.growthMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, -30);
 			GameEngine.scene.add(this.growthMesh);
 		}
 		if (this.growthLevel > 0) {
-			this.growthMesh.material.map = tileManager.textures[6+this.growthLevel].map;
+			this.growthMesh.material.map = tileManager.textures[growthKey[this.growthLevel].textureIndex].map;
 			this.growthMesh.visible = true;
 		} else {
 			this.growthMesh.visible = false;
@@ -122,48 +148,51 @@ var genTileGroup = function(lTileX,lTileY){
 	}
 	if(lTileX == 0){ //block west
 		for(var y = 0; y<lTileSize; y++){
-			tiles[0][y] = new tile(7, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+			tiles[0][y] = new tile(7, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 		}
 	} 
 	if(lTileX == centerLTileIndex*2){ //block west
 		for(var y = 0; y<lTileSize; y++){
-			tiles[lTileSize-1][y] = new tile(7, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+			tiles[lTileSize-1][y] = new tile(7, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 		}
 	}
 	if(lTileY == 0){ //block north
 		for(var x = 0; x<lTileSize; x++){
-			tiles[x][0] = new tile(7, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+			tiles[x][0] = new tile(7, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 		}
 	}
 	if(lTileY == centerLTileIndex*2){ //block south
 		for(var x = 0; x<lTileSize; x++){
-			tiles[x][lTileSize-1] = new tile(7, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+			tiles[x][lTileSize-1] = new tile(7, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 		}
 	}
-
+	
 	for(var i = 0; i<lTileSize; i++){
 		for(var j = 0; j<lTileSize; j++){
 			if(tiles[i][j] == null){ //fill tiles that are still empty
 				switch (Math.randomInt((lTileSize*lTileSize)/3)) { //on average 3 of each resource tile should be added to each tileGroup
 				  case 0:
-				  	tiles[i][j] = new tile(5, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+				  	tiles[i][j] = new tile(5, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				    break;
 				  case 1:
-				  	tiles[i][j] = new tile(3, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+				  	tiles[i][j] = new tile(3, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				    break;
 				  case 2:
-				  	tiles[i][j] = new tile(2, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+				  	tiles[i][j] = new tile(2, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				    break;
 				  case 3:
-				  	tiles[i][j] = new tile(4, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+				  	tiles[i][j] = new tile(4, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				    break;
 				  default:
-					tiles[i][j] = new tile(0,3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+					tiles[i][j] = new tile(0, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				    break;
 				}
 			}
 		}
 	}
+	
+	addHintsToTileGroup(tiles);
+	
 	return tiles;
 }
 
@@ -178,7 +207,7 @@ var genStartingTileGroup = function(lTileX,lTileY){
 	   	var i = Math.randomInt(lTileSize);
 		var j = Math.randomInt(lTileSize);
 		} while (((i>10&&i<19)&&(j>10&&j<19)));
-		tiles[i][j] = new tile(type, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center); //food
+		tiles[i][j] = new tile(type, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center); //food
 	}
 	placeNotInCenter(5);//food
 	placeNotInCenter(5);
@@ -206,12 +235,33 @@ var genStartingTileGroup = function(lTileX,lTileY){
 				if ((i>10&&i<19)&&(j>10&&j<19)){
 					tiles[i][j] = new tile(0, 0,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				} else
-					tiles[i][j] = new tile(Math.randomInt(2),3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+					tiles[i][j] = new tile(Math.randomInt(2),growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 			}
 		}
 	}
 	
+	addHintsToTileGroup(tiles);
+	
 	return tiles;
+}
+
+var addHintsToTileGroup = function(tileGroup)
+{
+	var hintRange = 2;
+	for (var x=0; x < tileGroup.length; x++){
+		for (var y =0; y < tileGroup[x].length; y++){
+			var hint = terainKey[tileGroup[x][y].terrainType].hint;
+			if (hint !== undefined){
+				// found a resource, place hints around
+				for (var x2=Math.max(0,x-hintRange); x2 <= x+hintRange && x2 < tileGroup.length; x2++){
+				for (var y2=Math.max(0,y-hintRange); y2 <= y+hintRange && y2 < tileGroup[x2].length; y2++){
+					if (tileGroup[x2][y2].terrainType === 0){
+						tileGroup[x2][y2].changeTerrain(hint);
+					}
+				}}
+			}
+		}
+	}
 }
 
 tileManager.prototype.worldToTileX = function(x){
@@ -300,7 +350,7 @@ var growTileGroup = function(tileGroup){ //doesnt currently grow accross tile gr
 	}//I hope this doesnt overly hurt performance. Without the copy sprouting based on a newly grown plant can occur
 	for(var i = 0; i<tileGroup.length; i++){
 		for(var j = 0; j<tileGroup[i].length; j++){
-			if(tileGroup[i][j].growthLevel>0 && tileGroup[i][j].growthLevel<3){ //grow
+			if(tileGroup[i][j].growthLevel>0 && tileGroup[i][j].growthLevel<growthMax){ //grow
 				tileGroup[i][j].growthLevel++;
 				tileGroup[i][j].drawGrowth()
 			}
@@ -379,6 +429,12 @@ tileManager.prototype.update = function(){ //grow the jungle
 		this.currentGrowCooldown = this.growCooldown;
 		this.growTiles();
 	}
+	
+	// call the tiles at the screen corners to force generation
+	this.getTileAtWorld(sampleGame.cameraController.getLeft(), sampleGame.cameraController.getTop());
+	this.getTileAtWorld(sampleGame.cameraController.getLeft(), sampleGame.cameraController.getBottom());
+	this.getTileAtWorld(sampleGame.cameraController.getRight(), sampleGame.cameraController.getTop());
+	this.getTileAtWorld(sampleGame.cameraController.getRight(), sampleGame.cameraController.getBottom());
 	
 	if (this.pathfindingNeedsUpdate){
 		this.updatePathfindingGraph();
