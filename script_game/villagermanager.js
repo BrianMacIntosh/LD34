@@ -79,7 +79,7 @@ VillagerManager.prototype.findPath = function(fromX, fromY, toX, toY)
 	
 	// the graph doesn't contain negative tiles (it's offset)
 	// so offset the input data
-	var centerOffset = lTileSize * (centerLTileIndex + 0.5);
+	var centerOffset = lTileSize * (centerLTileIndex + 0.5) - 1;
 	fromX += centerOffset;
 	fromY += centerOffset;
 	toX += centerOffset;

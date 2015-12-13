@@ -134,7 +134,7 @@ Villager.prototype.update = function()
 	var destination = undefined;
 	if (this.path && this.path.length > 0)
 	{
-		var centerOffset = lTileSize * (centerLTileIndex + 0.5);;
+		var centerOffset = lTileSize * (centerLTileIndex + 0.5) - 1;
 		destination = {
 			x:(this.path[0].x-centerOffset) * tilePixelWidth,
 			y:(this.path[0].y-centerOffset) * tilePixelHeight
