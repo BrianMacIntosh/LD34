@@ -74,7 +74,7 @@ VillagerManager.prototype.findPath = function(fromX, fromY, toX, toY)
 	toX += centerOffset;
 	toY += centerOffset;
 	
-	console.log("(" + fromX + "," + fromY + ")->(" + toX + "," + toY + ")");
+	//console.log("(" + fromX + "," + fromY + ")->(" + toX + "," + toY + ")");
 	
 	var graph = sampleGame.tileManager.pathfindingGraph;
 	var start = graph.grid[fromX][fromY];
