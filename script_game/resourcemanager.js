@@ -14,17 +14,14 @@ var ResourceManager = function()
 		stone:0,
 		wood:0,
 		iron:0,
-		food:10,
+		food:0,
 		water:0
 	}
 }
 
-ResourceManager.prototype.addResource = function(resource, count){
-	if(!Number.isInteger(count)){
-		count = 1
-	}
+ResourceManager.prototype.addResource = function(resource){
 	if(this.resourceCounts[resource] != null){
-		this.resourceCounts[resource]+=count;
+		this.resourceCounts[resource]++;
 	}
 }
 ResourceManager.prototype.removeResource = function(resource, count){

@@ -8,14 +8,15 @@ var Villager = function()
 	
 	this.transform.position.set(-50, 0, 0);
 	this.status = {
-		hunger: 98,
+		hunger: 198,
 		machetteStrength: 100,
 		fatigue: 0
 	}
 	this.hungerCooldown = 1
 	this.hungerCurrentCooldown = 1
 	this.hungerRemovedFromEating = 60
-
+	this.hungerModeCooldown = 1
+	this.hungerModeCurrentCooldown = 0
 	
 	// create mesh
 	this.geometry = bmacSdk.GEO.makeSpriteGeo(24,32);
@@ -44,6 +45,11 @@ Villager.actionTexture = bmacSdk.GEO.loadPixelTexture("media/actionicons.png"),
 
 Villager.prototype = Object.create(Actor.prototype);
 
+Villager.prototype.initNewTask = function(){
+	bmacSdk.GEO.setTilesheetGeometry(this.iconGeometry, this.task.getActionIconIndex(), 0, 4, 1);
+	this.pathToLocation(this.task.x, this.task.y);
+}
+
 Villager.prototype.update = function()
 {
 	var tile = sampleGame.tileManager.getTileAtWorld(this.transform.position.x, this.transform.position.y);
@@ -55,47 +61,76 @@ Villager.prototype.update = function()
 		this.status.hunger++;
 	}
 
-	if(this.status.hunger>100){ //they hunger. do hungery things
-		if(tile.getTerrainType().slice(0,11) == "villageHall"){ //eat when you get home
-			if(sampleGame.resourceManager.removeResource("food",1)){
-				this.status.hunger -= this.hungerRemovedFromEating;
+	var checkHungerAndEat = function(){
+		if(this.status.hunger>100){ //they hunger. do hungery things
+			if(tile.getTerrainType().slice(0,11) == "villageHall"){ //eat when you get home
+				if(sampleGame.resourceManager.removeResource("food",1)){
+					this.status.hunger -= this.hungerRemovedFromEating;
+				}
 			}
+		} else {
+			this.hungerModeCurrentCooldown = this.hungerModeCooldown;
 		}
 	}
-	if(this.status.hunger>200){//if starving drop any task that isnt food gathering
-		console.log("starving")
-	}
+	checkHungerAndEat();
+
+	/*if(this.status.hunger>200){//if starving drop any task that isnt food gathering
+		if(this.hungerModeCurrentCooldown > 0){
+			this.hungerModeCurrentCooldown -= bmacSdk.deltaSec;
+		} else if(!(this.task instanceof HungerTask)){
+			this.hungerModeCurrentCooldown = this.hungerModeCooldown;
+
+			sampleGame.villagerManager.freeTask(this.task);
+
+			if(this.heldResource != "food" && this.task.resourceType != "food"){
+				//console.log("starving")
+				if(sampleGame.resourceManager.resourceCounts.food<1){//no food, search for food task
+					this.task = sampleGame.villagerManager.findFoodTask()
+				}
+				if(!this.task){
+					this.task = new HungerTask();
+				}
+			}
+			bmacSdk.GEO.setTilesheetGeometry(this.iconGeometry, this.task.getActionIconIndex(), 0, 4, 1);
+			this.pathToLocation(this.task.x, this.task.y);
+		}
+		
+	}*/
 
 	
+
 	//TEMP:
-	if (!this.path || this.path.length <= 0)
-	{
+	if (!this.path || this.path.length <= 0){ //!!path lenth = 0 is not exactly the same as task done
 		if (this.task)
 		{
-			sampleGame.villagerManager.freeTask(this.task);
 			if (this.task instanceof ResourceTask)
 			{
 				// pick up a resource and take it back
+				sampleGame.villagerManager.freeTask(this.task);
 				this.heldResource = terainKey[tile.terrainType].resource;
-			}
-			else if (this.task instanceof ReturnResourceTask)
+				this.task = new ReturnResourceTask();
+				this.initNewTask();
+			} else if (this.task instanceof ReturnResourceTask 
+				&& sampleGame.tileManager.worldToTileX(this.transform.position.x) == 0
+				&& sampleGame.tileManager.worldToTileY(this.transform.position.y) == 0)
 			{
+				sampleGame.villagerManager.freeTask(this.task);
 				sampleGame.resourceManager.addResource(this.heldResource)
 				this.heldResource = undefined;
+				//this.task.complete = true;
+				//checkHungerAndEat();
 			}
 		}
-		if (this.heldResource)
-		{
-			this.task = new ReturnResourceTask();
-		}
-		else
-		{
+		if (!this.heldResource){
 			this.task = sampleGame.villagerManager.takeTask();
+			if(this.task!=null){
+				this.initNewTask();
+			}
+				
 		}
-		bmacSdk.GEO.setTilesheetGeometry(this.iconGeometry, this.task.getActionIconIndex(), 0, 3, 1);
-		this.pathToLocation(this.task.x, this.task.y);
+		
 	}
-	
+
 	var destination = undefined;
 	if (this.path && this.path.length > 0)
 	{
@@ -144,7 +179,7 @@ Villager.prototype.update = function()
 		}
 		if (passedX && passedY)
 		{
-			if (this.path && this.path.length > 0)
+			if (this.path && this.path.length > 0 && this.task != null)
 			{
 				//repath
 				this.pathToLocation(this.task.x, this.task.y);

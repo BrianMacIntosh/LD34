@@ -359,7 +359,7 @@ var growTileGroup = function(tileGroup){ //doesnt currently grow accross tile gr
 					for(var j2 = j-1; j2<=j+1; j2++){
 						if(i2<lTileSize && j2<lTileSize && i2>=0 && j2>=0){ //is in bounds
 							if(referenceCopy[i2][j2]>=2 
-								&& terainKey[tileGroup[i][j].terrainType].growthChance>Math.randomInt(30)+1){
+								&& terainKey[tileGroup[i][j].terrainType].growthChance>Math.randomInt(60)+1){
 								tileGroup[i][j].growthLevel = 1;
 								tileGroup[i][j].drawGrowth()
 							}

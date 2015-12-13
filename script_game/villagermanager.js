@@ -52,7 +52,9 @@ VillagerManager.prototype.takeTask = function()
 			break;
 		}
 	}
-	task.villagerAllowance--;
+	if(task != null){
+		task.villagerAllowance--;
+	}
 	return task;
 }
 
@@ -60,6 +62,15 @@ VillagerManager.prototype.freeTask = function(task)
 {
 	task.villagerAllowance++;
 }
+
+VillagerManager.prototype.findFoodTask = function(){
+	for (var c = 0; c < this.tasks.length; c++){
+		if(this.tasks[c] instanceof ResourceTask && this.tasks[c].resourceType == 'food'){
+			return this.tasks[c];
+		}
+	}
+}
+
 
 VillagerManager.prototype.findPath = function(fromX, fromY, toX, toY)
 {
@@ -161,9 +172,9 @@ var ResourceTask = function(x, y)
 	this.y = y;
 	this.villagerAllowance = 2;
 	this.buildRoads = true;
-	
-	terrain = sampleGame.tileManager.getTileTerrain(x, y);
-	switch (terrain) {
+	this.resourceType = sampleGame.tileManager.getTileTerrain(x, y);
+
+	switch (this.resourceType) {
 	  case "food":
 	  	this.flagMesh = new THREE.Mesh(VillagerManager.flagGeometry, VillagerManager.foodFlagMaterial);
 	    break;
@@ -207,6 +218,7 @@ var ReturnResourceTask = function()
 	this.x = 0;
 	this.y = 0;
 	this.villagerAllowance = 1;
+	this.complete = false
 }
 
 ReturnResourceTask.prototype.getActionIconIndex = function()
@@ -215,6 +227,23 @@ ReturnResourceTask.prototype.getActionIconIndex = function()
 }
 
 ReturnResourceTask.prototype.getPriority = function()
+{
+	return 1000;
+}
+
+var HungerTask = function()
+{
+	this.x = 0;
+	this.y = 0;
+	this.villagerAllowance = 1;
+}
+
+HungerTask.prototype.getActionIconIndex = function()
+{
+	return 3;
+}
+
+HungerTask.prototype.getPriority = function()
 {
 	return 1000;
 }
