@@ -94,7 +94,7 @@ Player.prototype.update = function()
 	var tileY = sampleGame.tileManager.worldToTileY(this.transform.position.y);
 	var currentTile = sampleGame.tileManager.getTile(tileX, tileY);
 	var interactionMessage = "";
-	if (currentTile)
+	if (currentTile instanceof tile)
 	{
 		var resource = terainKey[currentTile.terrainType].resource;
 		if (resource !== undefined && currentTile.growthLevel < growthMax)
