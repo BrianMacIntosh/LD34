@@ -25,6 +25,11 @@ sampleGame.added = function()
 	
 	this.introComplete = false;
 	
+	this.activeParticles = [];
+	this.pooledParticles = [];
+	this.leafTexture = THREE.ImageUtils.loadTexture("media/vfx_leaf.png");
+	this.leafGeo = bmacSdk.GEO.makeSpriteGeo(10,10);
+	
 	// muzak
 	this.music = new Audio("media/ngxmusicalngx_astrangedream.mp3");
 	this.music.loop = true;
@@ -48,7 +53,75 @@ sampleGame.update = function()
 		this.cameraController.update();
 		this.tileManager.update();
 		this.resourceManager.update();
+		this.updateParticles();
 	}
+};
+
+sampleGame.updateParticles = function()
+{
+	for (var c = this.activeParticles.length-1; c >= 0; c--)
+	{
+		var particle = this.activeParticles[c];
+		particle.timer -= bmacSdk.deltaSec;
+		particle.mesh.rotation.z += particle.angular * bmacSdk.deltaSec;
+		if (particle.stage == 0)
+		{
+			particle.mesh.position.x += particle.velocityx * bmacSdk.deltaSec;
+			particle.mesh.position.y += particle.velocityy * bmacSdk.deltaSec;
+			
+			if (particle.timer <= 0)
+			{
+				particle.stage = 1;
+				particle.timer = 1;
+			}
+		}
+		else
+		{
+			particle.mesh.position.y += 25 * bmacSdk.deltaSec;
+			
+			if (particle.timer <= 0)
+			{
+				particle.mesh.visible = false;
+				this.activeParticles.splice(c, 1);
+				this.pooledParticles.push(particle);
+			}
+		}
+	}
+}
+
+sampleGame.spawnLeafPlume = function(x, y)
+{
+	for (var c = 0; c < 6; c++)
+	{
+		var particle = this.getLeafParticle();
+		particle.stage = 0;
+		particle.velocityx = (Math.random() - 0.5) * 70;
+		particle.velocityy = (Math.random() / 2 + 0.5) * -70;
+		particle.angular = Math.PI + Math.PI * Math.random() / 2;
+		particle.timer = 0.4;
+		particle.mesh.position.set(x + (Math.random()-0.5)*60, y + (Math.random()-0.5)*40, -25);
+		particle.mesh.rotation.z = Math.random() * Math.PI * 2;
+	}
+};
+
+sampleGame.getLeafParticle = function()
+{
+	var particle;
+	if (this.pooledParticles.length > 0)
+	{
+		particle = this.pooledParticles[0];
+		this.pooledParticles.splice(0, 1);
+		particle.mesh.visible = true;
+	}
+	else
+	{
+		particle = {
+			mesh: bmacSdk.GEO.makeSpriteMesh(this.leafTexture, this.leafGeo)
+		}
+		GameEngine.scene.add(particle.mesh);
+	}
+	this.activeParticles.push(particle);
+	return particle;
 };
 
 sampleGame.getWorldBoundsMinX = function()
@@ -93,3 +166,4 @@ sampleGame.updateVolume = function()
 };
 
 GameEngine.addObject(sampleGame);
+

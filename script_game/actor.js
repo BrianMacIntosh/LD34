@@ -275,6 +275,7 @@ Actor.prototype.swingMachete = function()
 		{
 			myTile.growthLevel = Math.max(0, myTile.growthLevel - this.macheteDamage);
 			myTile.drawGrowth();
+			sampleGame.spawnLeafPlume(myTile.growthMesh.position.x, myTile.growthMesh.position.y);
 			didHit = true;
 		}
 		
@@ -286,6 +287,7 @@ Actor.prototype.swingMachete = function()
 		{
 			myTile.growthLevel = Math.max(0, myTile.growthLevel - this.macheteDamage);
 			myTile.drawGrowth();
+			sampleGame.spawnLeafPlume(myTile.growthMesh.position.x, myTile.growthMesh.position.y);
 			didHit = true;
 		}
 	
