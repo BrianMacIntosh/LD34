@@ -244,6 +244,20 @@ tileManager.prototype.getTile = function(x, y){ // external 0,0 is largeTileRows
 	return this.largeTileRows[lTileX][lTileY][sTileX][sTileY]
 }
 
+-tileManager.prototype.getTileTerrain = function(x, y){ // external 0,0 is largeTileRows[startingIndex][startingIndex][14][14]
+-	var lTileX = Math.floor((center+x)/lTileSize)
+-	var lTileY = Math.floor((center+y)/lTileSize)
+-	var sTileX = (center+x)%lTileSize
+-	var sTileY = (center+y)%lTileSize
+-	if(lTileX<0||lTileY<0||lTileX>=(centerLTileIndex*2)+1||lTileY>=(centerLTileIndex*2)+1){
+-		return "Here be Dragons. You've gone off the map."
+-	}
+-	if(this.largeTileRows[lTileX][lTileY] == null){
+-		this.largeTileRows[lTileX][lTileY] = genTileGroup(lTileX,lTileY);
+-	}
+-	return terainKey[this.largeTileRows[lTileX][lTileY][sTileX][sTileY].terrainType].type;
+-}
+
 tileManager.prototype.growTiles = function(){ //grow the jungle
 	for(var i = 0; i<this.largeTileRows.length; i++){
 		for(var j = 0; j<this.largeTileRows[i].length; j++){
