@@ -106,6 +106,9 @@ Actor.prototype.update = function()
 	var velX = this.velocity.x;
 	var velY = this.velocity.y;
 	
+	var lastPosX = this.transform.position.x;
+	var lastPosY = this.transform.position.y;
+	
 	// cap velocity while slashing
 	if (this.slashTimer <= this.macheteCooldown)
 	{
@@ -122,8 +125,49 @@ Actor.prototype.update = function()
 	this.transform.position.x += velX * bmacSdk.deltaSec;
 	this.transform.position.y += velY * bmacSdk.deltaSec * Actor.yMotionMultiplier;
 	
+	// if we moved into a blocked tile, move back
+	/*var newTileX = sampleGame.tileManager.worldToTileX(this.transform.position.x);
+	var newTileY = sampleGame.tileManager.worldToTileY(this.transform.position.y);
+	var newTile = sampleGame.tileManager.getTile(newTileX, newTileY);
+	if (newTile != currentTile && terainKey[newTile.terrainType].blocking)
+	{
+		var tileLeft = sampleGame.tileManager.tileToWorldX(newTileX) - tilePixelWidth/2;
+		var tileRight = tileLeft + tilePixelWidth;
+		var tileTop = sampleGame.tileManager.tileToWorldY(newTileY) - tilePixelHeight;
+		var tileBottom = tileTop + tilePixelHeight;
+		
+		//top
+		//console.log(tileLeft + "," + tileTop + " / " + tileRight + "," + tileBottom);
+		//console.log(lastPosX + "," + lastPosY + " / " + this.transform.position.x + "," + this.transform.position.y);
+		if (lineIntersection(lastPosX, lastPosY, this.transform.position.x, this.transform.position.y,
+			tileLeft, tileTop, tileRight, tileTop))
+		{
+			this.transform.position.y = tileTop-0.1;
+		}
+		
+		//bottom
+		if (lineIntersection(lastPosX, lastPosY, this.transform.position.x, this.transform.position.y,
+			tileLeft, tileBottom, tileRight, tileBottom))
+		{
+			this.transform.position.y = tileBottom+0.1;
+		}
+		
+		//left
+		if (lineIntersection(lastPosX, lastPosY, this.transform.position.x, this.transform.position.y,
+			tileLeft, tileTop, tileLeft, tileBottom))
+		{
+			this.transform.position.x = tileLeft-0.1;
+		}
+		
+		//right
+		if (lineIntersection(lastPosX, lastPosY, this.transform.position.x, this.transform.position.y,
+			tileRight, tileTop, tileRight, tileBottom))
+		{
+			this.transform.position.x = tileRight+0.1;
+		}
+	}*/
+	
 	// restrict in bounds
-	//TODO: unify with other collision code?
 	this.transform.position.x = Math.clamp(this.transform.position.x, sampleGame.getWorldBoundsMinX(), sampleGame.getWorldBoundsMaxX());
 	this.transform.position.y = Math.clamp(this.transform.position.y, sampleGame.getWorldBoundsMinY(), sampleGame.getWorldBoundsMaxY());
 	

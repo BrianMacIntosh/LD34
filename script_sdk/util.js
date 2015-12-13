@@ -126,3 +126,18 @@ Vector2.prototype.rotate = function(angle)
 	this.y = this.x * Math.sin(angle) + this.y * Math.cos(angle);
 	this.x = x;
 };
+
+//http://stackoverflow.com/a/16725715/4301707
+function CCW(p1x, p1y, p2x, p2y, p3x, p3y)
+{
+	a = p1x; b = p1y; 
+	c = p2x; d = p2y;
+	e = p3x; f = p3y;
+	return (f - b) * (c - a) > (d - b) * (e - a);
+}
+
+function lineIntersection(p1x, p1y, p2x, p2y, p3x, p3y, p4x, p4y)
+{
+	return (CCW(p1x, p1y, p3x, p3y, p4x, p4y) != CCW(p2x, p2y, p3x, p3y, p4x, p4y))
+		&& (CCW(p1x, p1y, p2x, p2y, p3x, p3y) != CCW(p1x, p1y, p2x, p2y, p4x, p4y));
+}
