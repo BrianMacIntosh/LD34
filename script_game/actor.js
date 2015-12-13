@@ -263,7 +263,6 @@ Actor.prototype.swingMachete = function()
 		{
 			myTile.growthLevel = Math.max(0, myTile.growthLevel - this.macheteDamage);
 			myTile.drawGrowth();
-			sampleGame.tileManager.pathfindingNeedsUpdate = true;
 		}
 		
 		// try to hit the tile I am facing
@@ -274,7 +273,6 @@ Actor.prototype.swingMachete = function()
 		{
 			myTile.growthLevel = Math.max(0, myTile.growthLevel - this.macheteDamage);
 			myTile.drawGrowth();
-			sampleGame.tileManager.pathfindingNeedsUpdate = true;
 		}
 	
 		//TODO: also try to hit things slightly to the left and right
