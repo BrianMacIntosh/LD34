@@ -3,16 +3,20 @@
 var terainKey = [ //growthChance = x/30
  {type:"neutral", growthChance:5, textureIndex:[0]},
  {type:"sandy", growthChance:3, textureIndex:[1]},
- {type:"stone", growthChance:1, textureIndex:[4,5], resource: "stone"},
- {type:"wood", growthChance:2, textureIndex:[], resource: "wood"},
- {type:"iron", growthChance:1, textureIndex:[2,3], resource: "iron"},
- {type:"food", growthChance:3, textureIndex:[10], resource: "food"},
+ {type:"stone", growthChance:1, textureIndex:[4,5], resource: "stone", hint:12},
+ {type:"wood", growthChance:2, textureIndex:[], resource: "wood", hint:13},
+ {type:"iron", growthChance:1, textureIndex:[2,3], resource: "iron", hint:14},
+ {type:"food", growthChance:3, textureIndex:[10], resource: "food", hint:15},
  {type:"water", growthChance:3, textureIndex:[6], resource: "water"},
  {type:"rockBlock", growthChance:1, textureIndex:[], blocking: true},
  {type:"villageHall_ne", growthChance:1, textureIndex:[11], blocking: true},
  {type:"villageHall_se", growthChance:1, textureIndex:[12], blocking: true},
- {type:"villageHall_sw", growthChance:1, textureIndex:[13], blocking: true},
+ {type:"villageHall_sw", growthChance:1, textureIndex:[13], blocking: true}, //10
  {type:"villageHall_nw", growthChance:1, textureIndex:[14], blocking: true},
+ {type:"stone_hint", growthChance:5, textureIndex:[15,16]},
+ {type:"wood_hint", growthChance:5, textureIndex:[0]},
+ {type:"iron_hint", growthChance:5, textureIndex:[17,18]},
+ {type:"food_hint", growthChance:5, textureIndex:[0]},
 ]
 var growthKey = [
  {type:"clear", pathWeight:2, speedMultiplier:1},
@@ -55,6 +59,10 @@ tileManager.textures =
 	{map:bmacSdk.GEO.loadPixelTexture("media/villagehall_se.png"),width:105,height:119,offX:(105-tilePixelWidth)/2,offY:-18},
 	{map:bmacSdk.GEO.loadPixelTexture("media/villagehall_sw.png"),width:64,height:119,offY:-18},
 	{map:bmacSdk.GEO.loadPixelTexture("media/villagehall_nw.png"),width:64,height:95,offY:-(95-tilePixelHeight)/2},
+	{map:bmacSdk.GEO.loadPixelTexture("media/stonehint1.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/stonehint2.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/ironhint1.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/ironhint2.png")},
 ]
 
 // initialize geometry for textures
@@ -83,17 +91,27 @@ var tile = function (terrainType, growthLevel, globalX, globalY){
 	this.terrainType = ((terrainType != null) ? terrainType : 0);
 	this.growthLevel = ((growthLevel != null) ? growthLevel : 3);
 	
-	if(terainKey[terrainType].textureIndex.length != 0 && globalX != null){
-		var texture = tileManager.textures[
-				terainKey[terrainType].textureIndex[
-					Math.randomInt(terainKey[terrainType].textureIndex.length)
-				]
-			];
-		this.terrainMesh = bmacSdk.GEO.makeSpriteMesh(texture.map, texture.geo);
-		//HACK: place textures that are not the default size above others
-		this.terrainMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, texture.isExtraSized?-89:-90);
-		GameEngine.scene.add(this.terrainMesh);
+	this.changeTerrain = function(index){
+		if (this.terrainMesh){
+			GameEngine.scene.remove(this.terrainMesh);
+		}
+		if(terainKey[terrainType].textureIndex.length != 0 && globalX != null){
+			var texture = tileManager.textures[
+					terainKey[index].textureIndex[
+						Math.randomInt(terainKey[index].textureIndex.length)
+					]
+				];
+			if (texture){
+				this.terrainMesh = bmacSdk.GEO.makeSpriteMesh(texture.map, texture.geo);
+				//HACK: place textures that are not the default size above others
+				this.terrainMesh.position.set(globalX*tilePixelWidth, globalY*tilePixelHeight, texture.isExtraSized?-89:-90);
+				GameEngine.scene.add(this.terrainMesh);
+			}
+		}
 	}
+	
+	this.changeTerrain(terrainType);
+	
 	this.drawGrowth = function(){
 		if (!this.growthMesh){
 			this.growthMesh = bmacSdk.GEO.makeSpriteMesh(tileManager.textures[6+this.growthLevel].map, tileManager.geo);
@@ -138,7 +156,7 @@ var genTileGroup = function(lTileX,lTileY){
 			tiles[x][lTileSize-1] = new tile(7, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 		}
 	}
-
+	
 	for(var i = 0; i<lTileSize; i++){
 		for(var j = 0; j<lTileSize; j++){
 			if(tiles[i][j] == null){ //fill tiles that are still empty
@@ -162,6 +180,9 @@ var genTileGroup = function(lTileX,lTileY){
 			}
 		}
 	}
+	
+	addHintsToTileGroup(tiles);
+	
 	return tiles;
 }
 
@@ -207,7 +228,28 @@ var genStartingTileGroup = function(lTileX,lTileY){
 		}
 	}
 	
+	addHintsToTileGroup(tiles);
+	
 	return tiles;
+}
+
+var addHintsToTileGroup = function(tileGroup)
+{
+	var hintRange = 2;
+	for (var x=0; x < tileGroup.length; x++){
+		for (var y =0; y < tileGroup[x].length; y++){
+			var hint = terainKey[tileGroup[x][y].terrainType].hint;
+			if (hint !== undefined){
+				// found a resource, place hints around
+				for (var x2=Math.max(0,x-hintRange); x2 <= x+hintRange && x2 < tileGroup.length; x2++){
+				for (var y2=Math.max(0,y-hintRange); y2 <= y+hintRange && y2 < tileGroup[x2].length; y2++){
+					if (tileGroup[x2][y2].terrainType === 0){
+						tileGroup[x2][y2].changeTerrain(hint);
+					}
+				}}
+			}
+		}
+	}
 }
 
 tileManager.prototype.worldToTileX = function(x){

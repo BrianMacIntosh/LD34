@@ -117,11 +117,13 @@ Villager.prototype.update = function()
 		{
 			if (this.path && this.path.length > 0)
 			{
-				this.path.splice(0, 1);
+				//repath
+				this.pathToLocation(this.task.x, this.task.y);
+				/*this.path.splice(0, 1);
 				if (this.path.length <= 0)
 				{
 					this.path = undefined;
-				}
+				}*/
 			}
 		}
 	}
