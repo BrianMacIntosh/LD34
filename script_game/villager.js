@@ -51,7 +51,7 @@ Villager.prototype.update = function()
 			}
 			else if (this.task instanceof ReturnResourceTask)
 			{
-				//TODO: return resource
+				sampleGame.resourceManager.addResource(this.heldResource)
 				this.heldResource = undefined;
 			}
 		}

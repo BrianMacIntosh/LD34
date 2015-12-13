@@ -19,6 +19,12 @@ var ResourceManager = function()
 	}
 }
 
+ResourceManager.prototype.addResource = function(resource){
+	if(this.resourceCounts[resource] != null){
+		this.resourceCounts[resource]++;
+	}
+}
+
 ResourceManager.prototype.update = function(){
 	updateCount("foodCount", JSON.stringify(this.resourceCounts.food))
 	updateCount("woodCount", JSON.stringify(this.resourceCounts.wood))
@@ -34,7 +40,4 @@ var updateCount = function(elementId, value){
 	} else {
 		element.style.color = 'black';
 	}
-		
-
-
 }
