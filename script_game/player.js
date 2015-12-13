@@ -30,6 +30,16 @@ var Player = function()
 
 Player.texture = bmacSdk.GEO.loadPixelTexture("media/player.png");
 
+Player.plantFlagSound =
+[
+	"media/95275__department64__metal-rings-04.wav",
+];
+
+Player.lowerFlagSound =
+[
+	"media/19291__martian__foley-cloth-rustle.wav",
+];
+
 // stores functions to call to check control states
 Player.controls =
 {
@@ -126,6 +136,7 @@ Player.prototype.update = function()
 				
 				if (Player.controls.interact())
 				{
+					AUDIOMANAGER.playSound(Player.lowerFlagSound, 1);
 					sampleGame.villagerManager.unflagResourceAt(tileX, tileY);
 				}
 			}
@@ -136,6 +147,7 @@ Player.prototype.update = function()
 				
 				if (Player.controls.interact())
 				{
+					AUDIOMANAGER.playSound(Player.plantFlagSound, 1);
 					sampleGame.villagerManager.flagResourceAt(tileX, tileY);
 				}
 			}
