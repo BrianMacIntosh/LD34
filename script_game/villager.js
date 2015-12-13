@@ -6,6 +6,15 @@ var Villager = function()
 	this.acceleration = 99999;
 	
 	this.transform.position.set(-50, 0, 0);
+	this.status = {
+		hunger: 98,
+		machetteStrength: 100,
+		fatigue: 0
+	}
+	this.hungerCooldown = 1
+	this.hungerCurrentCooldown = 1
+	this.hungerRemovedFromEating = 60
+
 	
 	// create mesh
 	this.geometry = bmacSdk.GEO.makeSpriteGeo(24,32);
@@ -37,6 +46,25 @@ Villager.prototype = Object.create(Actor.prototype);
 Villager.prototype.update = function()
 {
 	var tile = sampleGame.tileManager.getTileAtWorld(this.transform.position.x, this.transform.position.y);
+
+	if(this.hungerCurrentCooldown > 0){
+		this.hungerCurrentCooldown -= bmacSdk.deltaSec;
+	} else {
+		this.hungerCurrentCooldown = this.hungerCooldown;
+		this.status.hunger++;
+	}
+
+	if(this.status.hunger>100){ //they hunger. do hungery things
+		if(tile.getTerrainType().slice(0,11) == "villageHall"){ //eat when you get home
+			if(sampleGame.resourceManager.removeResource("food",1)){
+				this.status.hunger -= this.hungerRemovedFromEating;
+			}
+		}
+	}
+	if(this.status.hunger>200){//if starving drop any task that isnt food gathering
+		console.log("starving")
+	}
+
 	
 	//TEMP:
 	if (!this.path || this.path.length <= 0)

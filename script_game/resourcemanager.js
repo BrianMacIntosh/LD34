@@ -19,10 +19,23 @@ var ResourceManager = function()
 	}
 }
 
-ResourceManager.prototype.addResource = function(resource){
-	if(this.resourceCounts[resource] != null){
-		this.resourceCounts[resource]++;
+ResourceManager.prototype.addResource = function(resource, count){
+	if(!Number.isInteger(count)){
+		count = 1
 	}
+	if(this.resourceCounts[resource] != null){
+		this.resourceCounts[resource]+=count;
+	}
+}
+ResourceManager.prototype.removeResource = function(resource, count){
+	if(!Number.isInteger(count)){
+		count = 1
+	}
+	if(this.resourceCounts[resource] != null && this.resourceCounts[resource]>=count){
+		this.resourceCounts[resource]-=count;
+		return 1
+	}
+	return 0;
 }
 
 ResourceManager.prototype.update = function(){

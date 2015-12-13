@@ -82,7 +82,9 @@ for (var c = 0; c < tileManager.textures.length; c++)
 var tile = function (terrainType, growthLevel, globalX, globalY){
 	this.terrainType = ((terrainType != null) ? terrainType : 0);
 	this.growthLevel = ((growthLevel != null) ? growthLevel : 3);
-	
+	this.getTerrainType = function(){
+		return terainKey[terrainType].type;
+	}
 	if(terainKey[terrainType].textureIndex.length != 0 && globalX != null){
 		var texture = tileManager.textures[
 				terainKey[terrainType].textureIndex[
@@ -179,6 +181,8 @@ var genStartingTileGroup = function(lTileX,lTileY){
 		tiles[i][j] = new tile(type, 3,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center); //food
 	}
 	placeNotInCenter(5);//food
+	placeNotInCenter(5);
+	placeNotInCenter(5);
 	placeNotInCenter(5);
 
 	placeNotInCenter(3);//wood
