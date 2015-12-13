@@ -15,6 +15,12 @@ var Player = function()
 	this.transform.add(this.mesh);
 	this.mesh.position.set(0, 0, -50);
 	
+	// create control intro
+	this.controlGeo = bmacSdk.GEO.makeSpriteGeo(98,64);
+	this.controlMesh = bmacSdk.GEO.makeSpriteMesh(bmacSdk.GEO.loadPixelTexture("media/controls.png"), this.controlGeo);
+	GameEngine.scene.add(this.controlMesh);
+	this.controlMesh.position.set(-98/2, -64/2, -2);
+	
 	this.controlHelperDom = document.getElementById("interactionMessage");
 	
 	bmacSdk.GEO.setTilesheetGeometry(this.geometry, 0, 1, 24, 4);
@@ -67,26 +73,38 @@ Player.prototype.update = function()
 		sampleGame.tileManager.peek();
 	}
 	
+	var anyControl = false;
+	
 	// take input and set desired movement
 	if (Player.controls.left())
 	{
 		this.desiredMovement.x--;
+		anyControl = true;
 	}
 	if (Player.controls.right())
 	{
 		this.desiredMovement.x++;
+		anyControl = true;
 	}
 	if (Player.controls.up())
 	{
 		this.desiredMovement.y--;
+		anyControl = true;
 	}
 	if (Player.controls.down())
 	{
 		this.desiredMovement.y++;
+		anyControl = true;
 	}
 	if (Player.controls.machete())
 	{
 		this.swingMachete();
+		anyControl = true;
+	}
+	
+	if (anyControl)
+	{
+		this.controlMesh.visible = false;
 	}
 	
 	// display a UI helper for the player to interact with things

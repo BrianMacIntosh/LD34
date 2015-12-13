@@ -24,7 +24,7 @@ font-weight:bold;
 #canvasDiv
 {
 width:800px;
-height:576px;
+height:600px;
 padding:0;
 margin:auto;
 overflow:hidden;
@@ -36,4 +36,32 @@ border:1px solid black;
 -webkit-user-select: none; 
 -o-user-select: none; 
 user-select: none;
+}
+
+#introText
+{
+position:absolute;
+width:760px;
+height:560px;
+background-color:black;
+color:white;
+font-size:large;
+padding:20px;
+}
+
+#startButton
+{
+position:relative;
+width:100px;
+height:30px;
+margin-left:-50px;
+left:50%;
+border:2px solid white;
+background-color:black;
+text-align:center;
+}
+#startButton:hover
+{
+color:black;
+background-color:white;
 }

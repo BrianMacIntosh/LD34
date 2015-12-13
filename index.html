@@ -116,6 +116,12 @@ void main(void)
 
 <div id="canvasDiv">
 <noscript>You need Javascript enabled to play the game!</noscript>
+<div id="introText">
+<p>Here in &lt;PLACENAME&gt;, the jungle has eyes.</p>
+<p>It encroaches on our settlement daily. We must constantly beat back the creeping vines, lest they shatter our homes and devour us as we sleep. But we can't continue our effort without resources.</p>
+<p>We can salvage the pieces left behind by our unfortunate predecessors, but to find them, someone must brave the jungle...</p>
+<div id="startButton" onclick="document.getElementById('introText').style.visibility='hidden';sampleGame.introComplete=true;">Begin</div>
+</div>
 <div id="interactionMessage"></div>
 </div>
 </body>

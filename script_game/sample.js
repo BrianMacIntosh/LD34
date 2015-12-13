@@ -20,6 +20,8 @@ sampleGame.added = function()
 	this.cameraController = new CameraController(GameEngine.mainCamera);
 	
 	this.resources = new ResourceManager();
+	
+	this.introComplete = false;
 };
 
 sampleGame.removed = function()
@@ -29,12 +31,13 @@ sampleGame.removed = function()
 
 sampleGame.update = function()
 {
-	this.villagerManager.update();
-	this.cameraController.update();
-	this.tileManager.update();
-	this.resourceManager.update();
-
-
+	if (this.introComplete)
+	{
+		this.villagerManager.update();
+		this.cameraController.update();
+		this.tileManager.update();
+		this.resourceManager.update();
+	}
 };
 
 sampleGame.getWorldBoundsMinX = function()
