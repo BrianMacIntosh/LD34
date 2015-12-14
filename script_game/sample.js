@@ -167,7 +167,7 @@ sampleGame.tooltip = function(key)
 	}
 	else if (key == 'wood')
 	{
-		content = "Every 20 builds a house for a new villager.";
+		content = "Every " + this.resourceManager.woodForNewVillager + " builds a house for a new villager.";
 	}
 	else if (key == 'stone')
 	{
