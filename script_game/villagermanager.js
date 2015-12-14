@@ -63,12 +63,14 @@ VillagerManager.prototype.freeTask = function(task)
 	task.villagerAllowance++;
 }
 
-VillagerManager.prototype.findFoodTask = function(){
+VillagerManager.prototype.findAndAssignFoodTask = function(){
 	for (var c = 0; c < this.tasks.length; c++){
 		if(this.tasks[c] instanceof ResourceTask && this.tasks[c].resourceType == 'food'){
+			this.tasks[c].villagerAllowance--
 			return this.tasks[c];
 		}
 	}
+	return undefined
 }
 
 
@@ -90,6 +92,9 @@ VillagerManager.prototype.findPath = function(fromX, fromY, toX, toY)
 	var graph = sampleGame.tileManager.pathfindingGraph;
 	var start = graph.grid[fromX][fromY];
 	var end = graph.grid[toX][toY];
+
+	//console.log(graph, start, end);
+
 	return astar.search(graph, start, end);
 }
 

@@ -8,13 +8,13 @@ var Villager = function()
 	
 	this.transform.position.set(-50, 0, 0);
 	this.status = {
-		hunger: 198,
+		hunger: 95,
 		machetteStrength: 100,
 		fatigue: 0
 	}
 	this.hungerCooldown = 1
 	this.hungerCurrentCooldown = 1
-	this.hungerRemovedFromEating = 60
+	this.hungerRemovedFromEating = 75
 	this.hungerModeCooldown = 1
 	this.hungerModeCurrentCooldown = 0
 	
@@ -61,42 +61,40 @@ Villager.prototype.update = function()
 		this.status.hunger++;
 	}
 
-	var checkHungerAndEat = function(){
-		if(this.status.hunger>100){ //they hunger. do hungery things
-			if(tile.getTerrainType().slice(0,11) == "villageHall"){ //eat when you get home
-				if(sampleGame.resourceManager.removeResource("food",1)){
-					this.status.hunger -= this.hungerRemovedFromEating;
-				}
-			}
-		} else {
-			this.hungerModeCurrentCooldown = this.hungerModeCooldown;
-		}
-	}
-	checkHungerAndEat();
-
-	/*if(this.status.hunger>200){//if starving drop any task that isnt food gathering
+	if(this.status.hunger>150){//if starving drop any task that isnt food gathering
 		if(this.hungerModeCurrentCooldown > 0){
 			this.hungerModeCurrentCooldown -= bmacSdk.deltaSec;
 		} else if(!(this.task instanceof HungerTask)){
 			this.hungerModeCurrentCooldown = this.hungerModeCooldown;
 
-			sampleGame.villagerManager.freeTask(this.task);
 
 			if(this.heldResource != "food" && this.task.resourceType != "food"){
 				//console.log("starving")
+				sampleGame.villagerManager.freeTask(this.task);
+				this.task = undefined
+
 				if(sampleGame.resourceManager.resourceCounts.food<1){//no food, search for food task
-					this.task = sampleGame.villagerManager.findFoodTask()
+					this.task = sampleGame.villagerManager.findAndAssignFoodTask()
 				}
 				if(!this.task){
 					this.task = new HungerTask();
 				}
+				this.initNewTask()
 			}
-			bmacSdk.GEO.setTilesheetGeometry(this.iconGeometry, this.task.getActionIconIndex(), 0, 4, 1);
-			this.pathToLocation(this.task.x, this.task.y);
 		}
-		
-	}*/
+	}
 
+	if(this.task 
+		&& this.path 
+		&& this.path.length == 0
+		&& (sampleGame.tileManager.worldToTileX(this.transform.position.x) != this.task.x
+		|| sampleGame.tileManager.worldToTileY(this.transform.position.y) != this.task.y)){
+			sampleGame.tileManager.updatePathfindingGraph();
+			this.pathToLocation(this.task.x, this.task.y);
+			if(this.path.length == 0){
+				console.log("!!!empty repath")
+			}
+	}
 	
 
 	//TEMP:
@@ -118,7 +116,6 @@ Villager.prototype.update = function()
 				sampleGame.resourceManager.addResource(this.heldResource)
 				this.heldResource = undefined;
 				//this.task.complete = true;
-				//checkHungerAndEat();
 			}
 		}
 		if (!this.heldResource){
@@ -128,7 +125,16 @@ Villager.prototype.update = function()
 			}
 				
 		}
-		
+	}
+
+	if(this.status.hunger>=100){ //they hunger. do hungery things
+		if(tile.getTerrainType().slice(0,11) == "villageHall"){ //eat when you get home
+			if(sampleGame.resourceManager.removeResource("food",1)){
+				this.status.hunger -= this.hungerRemovedFromEating;
+			}
+		}
+	} else {
+		this.hungerModeCurrentCooldown = this.hungerModeCooldown;
 	}
 
 	var destination = undefined;
@@ -195,8 +201,10 @@ Villager.prototype.update = function()
 
 Villager.prototype.pathToLocation = function(x, y)
 {
-	this.path = sampleGame.villagerManager.findPath(
+	var newPath = sampleGame.villagerManager.findPath(
 		sampleGame.tileManager.worldToTileX(this.transform.position.x),
 		sampleGame.tileManager.worldToTileY(this.transform.position.y),
 		x, y);
+	if(newPath.length!=0)
+		this.path = newPath;
 }

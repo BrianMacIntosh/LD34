@@ -14,7 +14,7 @@ var ResourceManager = function()
 		stone:0,
 		wood:0,
 		iron:0,
-		food:0,
+		food:10,
 		water:0
 	}
 }
