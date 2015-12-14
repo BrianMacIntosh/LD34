@@ -30,6 +30,11 @@ sampleGame.added = function()
 	this.leafTexture = THREE.ImageUtils.loadTexture("media/vfx_leaf.png");
 	this.leafGeo = bmacSdk.GEO.makeSpriteGeo(10,10);
 	
+	this.tooltipDiv = document.getElementById("helperMessage");
+	this.notifyDiv = document.getElementById("notifyMessage");
+	this.notificationLifetime = 5;
+	this.notificationTimer = 0;
+	
 	// muzak
 	this.music = new Audio("media/ngxmusicalngx_astrangedream.mp3");
 	this.music.loop = true;
@@ -54,6 +59,15 @@ sampleGame.update = function()
 		this.tileManager.update();
 		this.resourceManager.update();
 		this.updateParticles();
+	}
+	
+	if (this.notificationTimer > 0)
+	{
+		this.notificationTimer -= bmacSdk.deltaSec;
+		if (this.notificationTimer <= 0)
+		{
+			this.notifyDiv.innerHTML = "";
+		}
 	}
 };
 
@@ -143,6 +157,34 @@ sampleGame.getWorldBoundsMaxY = function()
 {
 	return (centerLTileIndex + 0.5) * lTileSize * tilePixelHeight + tilePixelHeight / 2;
 };
+
+sampleGame.tooltip = function(key)
+{
+	var content = "";
+	if (key == 'food')
+	{
+		content = "Villagers eat it for energy.";
+	}
+	else if (key == 'wood')
+	{
+		content = "Every 20 builds a house for a new villager.";
+	}
+	else if (key == 'stone')
+	{
+		content = "Villagers use it to build roads.";
+	}
+	else if (key == 'iron')
+	{
+		content = "Villagers use it to increase machete strength.";
+	}
+	this.tooltipDiv.innerHTML = content;
+}
+
+sampleGame.notify = function(message)
+{
+	this.notifyDiv.innerHTML = message;
+	this.notificationTimer = this.notificationLifetime;
+}
 
 sampleGame.playSoundFallOff = function(sound, vol, pos)
 {

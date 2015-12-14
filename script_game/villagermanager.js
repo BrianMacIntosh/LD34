@@ -4,10 +4,9 @@ var VillagerManager = function()
 	this.villagers = [];
 	this.tasks = [];
 	
-	//TEMP: create some test villagers
-	for (var c = 0; c < 10; c++)
+	for (var c = 0; c < 7; c++)
 	{
-		this.villagers.push(new Villager());
+		this.addNewVillager();
 	}
 	
 	// create tasks for keeping village clear
@@ -29,6 +28,11 @@ VillagerManager.flagGeometry = bmacSdk.GEO.makeSpriteGeo(64,82);
 // radius around village in which villagers should keep foliage clear
 VillagerManager.villageClearRadiusTiles = 5;
 VillagerManager.maxVillageClearPriority = 50;
+
+VillagerManager.helloSound =
+[
+	"media/185930__wobbsygames__3-hello.wav",
+];
 
 VillagerManager.prototype.update = function()
 {
@@ -73,6 +77,15 @@ VillagerManager.prototype.findAndAssignFoodTask = function(){
 	return undefined
 }
 
+VillagerManager.prototype.addNewVillager = function(notify)
+{
+	this.villagers.push(new Villager());
+	if (notify)
+	{
+		AUDIOMANAGER.playSound(VillagerManager.helloSound);
+		sampleGame.notify("<span style='color:Chartreuse'>A new villager has arrived!</span>");
+	}
+}
 
 VillagerManager.prototype.findPath = function(fromX, fromY, toX, toY)
 {

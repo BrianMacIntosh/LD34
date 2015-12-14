@@ -36,6 +36,16 @@ color:white;
 text-align:center;
 font-weight:bold;
 }
+#topMessages
+{
+position:absolute;
+padding-top:10px;
+width:800px;
+color:white;
+text-align:center;
+font-weight:bold;
+text-shadow:2px 2px black;
+}
 
 #canvasDiv
 {
@@ -51,11 +61,11 @@ z-index:-1;
 {
 position:absolute;
 width:760px;
-height:560px;
+height:540px;
 background-color:black;
 color:white;
 font-size:large;
-padding:20px;
+padding:40px;
 }
 
 #startButton

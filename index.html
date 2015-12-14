@@ -101,23 +101,27 @@ void main(void)
 <!--<div id="homediv"><a href="/" target="_blank"><img src="/media/title_penguin.png" height="64" alt="Penguin in a TV"/></a></div>-->
 
 <div id="outer" style="width:100%; align-items: center;margin-top:10px">  
-  <div id="resourceDiv" style="height: 36px; width: 496px; margin: 0 auto; color:white;">
-	  <div id="foodDiv" style="float: left; height: 32px; width:120px; border: 2px solid grey; margin: 0 auto; display: flex; align-items: center">
-	  	<img src="media/foodIcon.png" alt="Food Icon">
-	  	Food: <span id="foodCount" align="center" style="color:indianred; width: 100%;">0</span>
-	  </div>
-	  <div id="woodDiv" style="float: left; height: 32px; width:120px; border: 2px solid grey; margin: 0 auto; display: flex; align-items: center">
-	  	<img src="media/woodIcon.png" alt="Wood Icon">
-	  	Wood: <span id="woodCount" align="center" style="color:indianred; width: 100%;">0</span>
-	  </div>
-	  <div id="stoneDiv" style="float:left;height: 32px; width:120px; border: 2px solid grey; margin: 0 auto; display: flex; align-items: center">
-	  	<img src="media/stoneIcon.png" alt="Stone Icon">
-	  	Stone: <span id="stoneCount" align="center" style="color:indianred; width: 100%;">0</span>
-	  </div>
-	  <div id="ironDiv" style="float:left; height: 32px; width:120px; border: 2px solid grey; margin: 0 auto; display: flex; align-items: center">
-	  	<img src="media/ironIcon.png" alt="Iron Icon">
-	  	Iron: <span id="ironCount" align="center" style="color:indianred; width: 100%;">0</span>
-	  </div>
+  <div id="resourceDiv" style="height: 36px; width: 616px; margin: 0 auto; color:white;">
+	<div id="foodDiv" style="float: left; height: 32px; width:150px; border: 2px solid grey; margin: 0 auto; display: flex; align-items: center">
+		<img src="media/helptooltip.png" alt="Food Tooltip" onmouseover="sampleGame.tooltip('food')" onmouseout="sampleGame.tooltip()"> 
+		<img src="media/foodIcon.png" alt="Food Icon"> 
+		Food: <span id="foodCount" align="center" style="color:indianred; width: 100%;">0</span>
+	</div>
+	<div id="woodDiv" style="float: left; height: 32px; width:150px; border: 2px solid grey; margin: 0 auto; display: flex; align-items: center">
+		<img src="media/helptooltip.png" alt="Wood Tooltip" onmouseover="sampleGame.tooltip('wood')" onmouseout="sampleGame.tooltip()"> 
+		<img src="media/woodIcon.png" alt="Wood Icon"> 
+		Wood: <span id="woodCount" align="center" style="color:indianred; width: 100%;">0</span>
+	</div>
+	<div id="stoneDiv" style="float:left;height: 32px; width:150px; border: 2px solid grey; margin: 0 auto; display: flex; align-items: center">
+		<img src="media/helptooltip.png" alt="Stone Tooltip" onmouseover="sampleGame.tooltip('stone')" onmouseout="sampleGame.tooltip()"> 
+		<img src="media/stoneIcon.png" alt="Stone Icon"> 
+		Stone: <span id="stoneCount" align="center" style="color:indianred; width: 100%;">0</span>
+	</div>
+	<div id="ironDiv" style="float:left; height: 32px; width:150px; border: 2px solid grey; margin: 0 auto; display: flex; align-items: center">
+		<img src="media/helptooltip.png" alt="Iron Tooltip" onmouseover="sampleGame.tooltip('iron')" onmouseout="sampleGame.tooltip()"> 
+		<img src="media/ironIcon.png" alt="Iron Icon"> 
+		Iron: <span id="ironCount" align="center" style="color:indianred; width: 100%;">0</span>
+	</div>
   </div>
 </div>
 
@@ -130,6 +134,10 @@ void main(void)
 <div id="startButton" onclick="document.getElementById('introText').style.visibility='hidden';sampleGame.introComplete=true;">Begin</div>
 </div>
 <div id="interactionMessage"></div>
+<div id="topMessages">
+<div id="helperMessage"></div>
+<div id="notifyMessage"></div>
+</div>
 </div>
 
 <div id="footer">

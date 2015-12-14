@@ -17,11 +17,18 @@ var ResourceManager = function()
 		food:10,
 		water:0
 	}
+	this.woodForNewVillager = 20;
 }
 
 ResourceManager.prototype.addResource = function(resource){
 	if(this.resourceCounts[resource] != null){
 		this.resourceCounts[resource]++;
+		
+		//check to consume wood
+		if (resource=='wood' && this.resourceCounts['wood']>=this.woodForNewVillager){
+			this.resourceCounts['wood'] -= this.woodForNewVillager;
+			sampleGame.villagerManager.addNewVillager(true);
+		}
 	}
 }
 ResourceManager.prototype.removeResource = function(resource, count){
