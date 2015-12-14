@@ -4,7 +4,7 @@ var terainKey = [ //growthChance = x/30
  {type:"neutral", growthChance:5, textureIndex:[0]},
  {type:"sandy", growthChance:3, textureIndex:[1]},
  {type:"stone", growthChance:1, textureIndex:[4,5], resource: "stone", hint:12},
- {type:"wood", growthChance:2, textureIndex:[], resource: "wood", hint:13},
+ {type:"wood", growthChance:2, textureIndex:[23], resource: "wood", hint:13},
  {type:"iron", growthChance:1, textureIndex:[2,3], resource: "iron", hint:14},
  {type:"food", growthChance:3, textureIndex:[10], resource: "food", hint:15},
  {type:"water", growthChance:3, textureIndex:[6], resource: "water"},
@@ -14,7 +14,7 @@ var terainKey = [ //growthChance = x/30
  {type:"villageHall_sw", growthChance:1, textureIndex:[13], blocking: true}, //10
  {type:"villageHall_nw", growthChance:1, textureIndex:[14], blocking: true},
  {type:"stone_hint", growthChance:5, textureIndex:[15,16]},
- {type:"wood_hint", growthChance:5, textureIndex:[0]},
+ {type:"wood_hint", growthChance:5, textureIndex:[24,25]},
  {type:"iron_hint", growthChance:5, textureIndex:[17,18]},
  {type:"food_hint", growthChance:5, textureIndex:[19,20]},
 ]
@@ -70,6 +70,11 @@ tileManager.textures =
 	{map:bmacSdk.GEO.loadPixelTexture("media/foodhint2.png")}, //20
 	{map:bmacSdk.GEO.loadPixelTexture("media/growth4.png")},
 	{map:bmacSdk.GEO.loadPixelTexture("media/growth5.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/wood.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/woodhint1.png")},
+	{map:bmacSdk.GEO.loadPixelTexture("media/woodhint2.png")},
+
+
 ]
 
 // initialize geometry for textures
@@ -187,7 +192,7 @@ var genTileGroup = function(lTileX,lTileY){
 				  	tiles[i][j] = new tile(4, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				    break;
 				  default:
-					tiles[i][j] = new tile(0, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
+					tiles[i][j] = new tile(Math.randomInt(2), growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center);
 				    break;
 				}
 			}
@@ -353,7 +358,8 @@ var growTileGroup = function(tileGroup){ //doesnt currently grow accross tile gr
 	}//I hope this doesnt overly hurt performance. Without the copy sprouting based on a newly grown plant can occur
 	for(var i = 0; i<tileGroup.length; i++){
 		for(var j = 0; j<tileGroup[i].length; j++){
-			if(tileGroup[i][j].growthLevel>0 && tileGroup[i][j].growthLevel<growthMax){ //grow
+			if(tileGroup[i][j].growthLevel>0 && tileGroup[i][j].growthLevel<growthMax
+				&& terainKey[tileGroup[i][j].terrainType].growthChance>Math.randomInt(10)+1){ //grow
 				tileGroup[i][j].growthLevel++;
 				tileGroup[i][j].drawGrowth()
 			}
