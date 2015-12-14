@@ -205,6 +205,6 @@ Villager.prototype.pathToLocation = function(x, y)
 		sampleGame.tileManager.worldToTileX(this.transform.position.x),
 		sampleGame.tileManager.worldToTileY(this.transform.position.y),
 		x, y);
-	if(newPath.length!=0)
+	//if(newPath.length!=0)
 		this.path = newPath;
 }
