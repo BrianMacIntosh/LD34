@@ -3,7 +3,7 @@ GameEngine = new bmacSdk.Engine("canvasDiv");
 
 sampleGame =
 {
-	
+	introComplete: false,
 };
 
 sampleGame.added = function()
@@ -22,8 +22,6 @@ sampleGame.added = function()
 	this.cameraController = new CameraController(GameEngine.mainCamera);
 	
 	this.resources = new ResourceManager();
-	
-	this.introComplete = false;
 	
 	this.activeParticles = [];
 	this.pooledParticles = [];
@@ -169,11 +167,12 @@ sampleGame.tooltip = function(key)
 	}
 	else if (key == 'stone')
 	{
-		content = "Villagers use it to build roads.";
+		content = "Villagers use " + roadCost + " to build roads.";
 	}
 	else if (key == 'iron')
 	{
 		content = "Villagers use it to increase machete strength.";
+		content += "<br/><span style='color:red'>This doesn't work.</span>";
 	}
 	this.tooltipDiv.innerHTML = content;
 }

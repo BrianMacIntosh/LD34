@@ -229,7 +229,18 @@ ResourceTask.prototype.getActionIconIndex = function()
 
 ResourceTask.prototype.getPriority = function()
 {
-	return 40;
+	switch (this.resourceType){
+	case "food":
+		return 42;
+	case "wood":
+		return 41;
+	case "stone":
+		return 40;
+	case "iron":
+		return 39;
+	default:
+		return 40;
+	}
 }
 
 

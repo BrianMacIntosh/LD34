@@ -39,7 +39,7 @@ var center = (centerLTileIndex*lTileSize)+Math.floor(lTileSize/2)-1
 var tilePixelWidth = 64
 var tilePixelHeight = 45
 var traverseCountForRoad = 12
-var roadCost = 10
+var roadCost = 5
 
 tileManager = function(){
 	this.growCooldown = 4.5
@@ -226,6 +226,7 @@ var genStartingTileGroup = function(lTileX,lTileY){
 		tiles[i][j] = new tile(type, growthMax,(lTileX*lTileSize+i)-center,(lTileY*lTileSize+j)-center); //food
 	}
 	placeNotInCenter(5);//food
+	placeNotInCenter(5);
 	placeNotInCenter(5);
 	placeNotInCenter(5);
 	placeNotInCenter(5);

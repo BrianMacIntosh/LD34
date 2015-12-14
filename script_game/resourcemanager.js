@@ -17,7 +17,7 @@ var ResourceManager = function()
 		food:10,
 		water:0
 	}
-	this.woodForNewVillager = 20;
+	this.woodForNewVillager = 8;
 	this.allocatedStone = 0;
 }
 

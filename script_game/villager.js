@@ -113,7 +113,6 @@ Villager.prototype.update = function()
 				&& sampleGame.tileManager.worldToTileX(this.transform.position.x) == 0
 				&& sampleGame.tileManager.worldToTileY(this.transform.position.y) == 0)
 			{
-				console.log(this.heldResource);
 				sampleGame.villagerManager.freeTask(this.task);
 				sampleGame.resourceManager.addResource(this.heldResource)
 				this.heldResource = undefined;
