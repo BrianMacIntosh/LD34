@@ -40,9 +40,7 @@ sampleGame.added = function()
 	this.music.loop = true;
 	this.music.play();
 	
-	this.soundVolume=1;
-	//TEMP:ship with 0.6
-	this.music.volume=0;
+	this.updateVolume();
 };
 
 sampleGame.removed = function()

@@ -4,12 +4,12 @@
 <head>
 <title>Game_Title</title>
 
-<meta property="og:title" content="Game_Title">
-<meta property="og:url" content="http://www.brianmacintosh.com/game_url/">
+<meta property="og:title" content="Vines of Darkness">
+<meta property="og:url" content="http://www.brianmacintosh.com/projects/ld34/">
 <meta property="og:site_name" content="Games by Brian MacIntosh">
 <meta property="og:type" content="website">
-<meta property="og:image" content="http://brianmacintosh.com/og_icon.png">
-<meta property="og:description" content="Game_Description">
+<meta property="og:image" content="http://brianmacintosh.com/projects/ld34/og_icon.png">
+<meta property="og:description" content="Vines of Darkness is a simulation game by Lucas Colvin and Brian MacIntosh.">
 
 <link rel="stylesheet" href="style.css" type="text/css"/>
 <link rel="image_src" href="http://brianmacintosh.com/game_icon" />
@@ -94,7 +94,7 @@ void main(void)
 <body onload="bmacSdk._attachDom()">
 
 <div id="settings">
-<input type="checkbox" id="musicMute" onchange="sampleGame.updateVolume()" checked>Mute Music</input><br>
+<input type="checkbox" id="musicMute" onchange="sampleGame.updateVolume()">Mute Music</input><br>
 <input type="checkbox" id="soundMute" onchange="sampleGame.updateVolume()">Mute Sound</input>
 </div>
 
@@ -128,7 +128,7 @@ void main(void)
 <div id="canvasDiv">
 <noscript>You need Javascript enabled to play the game!</noscript>
 <div id="introText">
-<p>Here in &lt;PLACENAME&gt;, the jungle has eyes.</p>
+<p>Here in the darkness, the jungle has eyes.</p>
 <p>It encroaches on our settlement daily. We must constantly beat back the creeping vines, lest they shatter our homes and devour us as we sleep. But we can't continue our effort without resources.</p>
 <p>We can salvage the pieces left behind by our unfortunate predecessors, but to find them, someone must brave the jungle...</p>
 <div id="startButton" onclick="document.getElementById('introText').style.visibility='hidden';sampleGame.introComplete=true;">Begin</div>
@@ -141,7 +141,7 @@ void main(void)
 </div>
 
 <div id="footer">
-A game by Brian MacIntosh and Lucas Colvin for <a href="http://ludumdare.com/compo/ludum-dare-34" target="_blank">LD#34</a>. Music by <a href="http://www.soundclick.com/bands/default.cfm?bandID=1236552" target="_blank">NGXmusical</a>.
+A game by Brian MacIntosh and Lucas Colvin for <a href="http://ludumdare.com/compo/ludum-dare-34" target="_blank">LD#34</a>. Music by <a href="http://www.soundclick.com/bands/default.cfm?bandID=1236552" target="_blank">NGXmusical</a>. Characters by <a href="http://opengameart.org/content/lpc-medieval-fantasy-character-sprites">wulax</a> (I apologize for butchering them)
 </body>
 
 </html>

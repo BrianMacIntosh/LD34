@@ -46,7 +46,7 @@ Actor.slashVfxMaterials =
 	new THREE.MeshBasicMaterial({ map:bmacSdk.GEO.loadPixelTexture("media/vfx_slash2.png"), transparent:true }),
 ]
 
-Actor.frameTime = 0.03;
+Actor.frameTime = 0.05;
 Actor.slashVfxLifetime = 0.25;
 
 Actor.macheteSounds =
@@ -218,11 +218,14 @@ Actor.prototype.update = function()
 		{
 			this.timeToNextFrame = Actor.frameTime;
 			this.currentFrame++;
-			while (this.currentFrame >= 24) this.currentFrame -= 24;
+			while (this.currentFrame >= 9) this.currentFrame -= 9;
 			
 			if (this.geometry)
 			{
-				bmacSdk.GEO.setTilesheetGeometry(this.geometry, this.currentFrame, this.direction, 24, 4);
+				var tiledir = this.direction;
+				if (this.direction == 1)tiledir=3;
+				else if (this.direction == 3)tiledir=1;
+				bmacSdk.GEO.setTilesheetGeometry(this.geometry, this.currentFrame, tiledir, 9, 4);
 			}
 		}
 	}

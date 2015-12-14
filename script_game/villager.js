@@ -19,7 +19,7 @@ var Villager = function()
 	this.hungerModeCurrentCooldown = 0
 	
 	// create mesh
-	this.geometry = bmacSdk.GEO.makeSpriteGeo(24,32);
+	this.geometry = bmacSdk.GEO.makeSpriteGeo(48,48);
 	var texture = Villager.textures[Math.floor(Math.random() * Villager.textures.length)];
 	this.mesh = bmacSdk.GEO.makeSpriteMesh(texture, this.geometry);
 	this.transform.add(this.mesh);
@@ -33,7 +33,7 @@ var Villager = function()
 	
 	this.path = [];
 	
-	bmacSdk.GEO.setTilesheetGeometry(this.geometry, 0, 1, 24, 4);
+	bmacSdk.GEO.setTilesheetGeometry(this.geometry, 0, 1, 9, 4);
 }
 
 Villager.textures =
@@ -46,13 +46,14 @@ Villager.actionTexture = bmacSdk.GEO.loadPixelTexture("media/actionicons.png"),
 Villager.prototype = Object.create(Actor.prototype);
 
 Villager.prototype.initNewTask = function(){
-	bmacSdk.GEO.setTilesheetGeometry(this.iconGeometry, this.task.getActionIconIndex(), 0, 4, 1);
+	bmacSdk.GEO.setTilesheetGeometry(this.iconGeometry, this.task.getActionIconIndex(), 0, 5, 1);
 	this.pathToLocation(this.task.x, this.task.y);
 }
 
 Villager.prototype.update = function()
 {
 	var tile = sampleGame.tileManager.getTileAtWorld(this.transform.position.x, this.transform.position.y);
+	var oldTile = tile;
 
 	if(this.hungerCurrentCooldown > 0){
 		this.hungerCurrentCooldown -= bmacSdk.deltaSec;
@@ -112,10 +113,17 @@ Villager.prototype.update = function()
 				&& sampleGame.tileManager.worldToTileX(this.transform.position.x) == 0
 				&& sampleGame.tileManager.worldToTileY(this.transform.position.y) == 0)
 			{
+				console.log(this.heldResource);
 				sampleGame.villagerManager.freeTask(this.task);
 				sampleGame.resourceManager.addResource(this.heldResource)
 				this.heldResource = undefined;
 				//this.task.complete = true;
+			}
+			else if (this.task instanceof BuildRoadTask)
+			{
+				sampleGame.resourceManager.resourceCounts.stone -= roadCost;
+				sampleGame.resourceManager.allocatedStone -= roadCost;
+				tile.changeTerrain(16);
 			}
 		}
 		if (!this.heldResource){
@@ -123,7 +131,6 @@ Villager.prototype.update = function()
 			if(this.task!=null){
 				this.initNewTask();
 			}
-				
 		}
 	}
 
@@ -167,6 +174,21 @@ Villager.prototype.update = function()
 	}
 	
 	Actor.prototype.update.call(this);
+	
+	var newTile = sampleGame.tileManager.getTileAtWorld(this.transform.position.x, this.transform.position.y);
+	
+	if (newTile !== oldTile && newTile.traverseCount < traverseCountForRoad)
+	{
+		newTile.traverseCount++;
+		
+		// add a road task
+		if (newTile.traverseCount >= traverseCountForRoad && terrainValidForRoad(newTile.terrainType))
+		{
+			sampleGame.villagerManager.tasks.push(new BuildRoadTask(
+				sampleGame.tileManager.worldToTileX(this.transform.position.x),
+				sampleGame.tileManager.worldToTileY(this.transform.position.y)));
+		}
+	}
 	
 	if (destination)
 	{

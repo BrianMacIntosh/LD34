@@ -2,8 +2,8 @@
 
 bmacSdk =
 {
-	CFG_PAUSE_WHEN_UNFOCUSED: true,
-	DEBUG_RENDERSTATS: true,
+	CFG_PAUSE_WHEN_UNFOCUSED: false,
+	DEBUG_RENDERSTATS: false,
 	
 	//Used to ignore large frame delta after focusin
 	_eatFrame: false,

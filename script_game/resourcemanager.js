@@ -18,6 +18,7 @@ var ResourceManager = function()
 		water:0
 	}
 	this.woodForNewVillager = 20;
+	this.allocatedStone = 0;
 }
 
 ResourceManager.prototype.addResource = function(resource){
@@ -45,8 +46,8 @@ ResourceManager.prototype.removeResource = function(resource, count){
 ResourceManager.prototype.update = function(){
 	updateCount("foodCount", JSON.stringify(this.resourceCounts.food))
 	updateCount("woodCount", JSON.stringify(this.resourceCounts.wood))
-	updateCount("stoneCount", JSON.stringify(this.resourceCounts.iron))
-	updateCount("ironCount", JSON.stringify(this.resourceCounts.stone))
+	updateCount("stoneCount", JSON.stringify(this.resourceCounts.stone))
+	updateCount("ironCount", JSON.stringify(this.resourceCounts.iron))
 }
 
 var updateCount = function(elementId, value){

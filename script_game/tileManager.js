@@ -1,5 +1,10 @@
 //A library to manage tiles
 
+var terrainValidForRoad = function(index)
+{
+	return (index < 2 || index > 13) && index < 16;
+}
+
 var terainKey = [ //growthChance = x/30
  {type:"neutral", growthChance:5, textureIndex:[0]},
  {type:"sandy", growthChance:3, textureIndex:[1]},
@@ -17,6 +22,7 @@ var terainKey = [ //growthChance = x/30
  {type:"wood_hint", growthChance:5, textureIndex:[24,25]},
  {type:"iron_hint", growthChance:5, textureIndex:[17,18]},
  {type:"food_hint", growthChance:5, textureIndex:[19,20]},
+ {type:"road", growthChance:1, textureIndex:[26]},
 ]
 var growthKey = [
  {type:"clear", pathWeight:1, speedMultiplier:1, textureIndex:-1},
@@ -32,6 +38,8 @@ var lTileSize = 30
 var center = (centerLTileIndex*lTileSize)+Math.floor(lTileSize/2)-1
 var tilePixelWidth = 64
 var tilePixelHeight = 45
+var traverseCountForRoad = 12
+var roadCost = 10
 
 tileManager = function(){
 	this.growCooldown = 4.5
@@ -73,8 +81,7 @@ tileManager.textures =
 	{map:bmacSdk.GEO.loadPixelTexture("media/wood.png")},
 	{map:bmacSdk.GEO.loadPixelTexture("media/woodhint1.png")},
 	{map:bmacSdk.GEO.loadPixelTexture("media/woodhint2.png")},
-
-
+	{map:bmacSdk.GEO.loadPixelTexture("media/road.png")},
 ]
 
 // initialize geometry for textures
@@ -102,6 +109,7 @@ for (var c = 0; c < tileManager.textures.length; c++)
 var tile = function (terrainType, growthLevel, globalX, globalY){
 	this.terrainType = ((terrainType != null) ? terrainType : 0);
 	this.growthLevel = ((growthLevel != null) ? growthLevel : 5);
+	this.traverseCount = 0;
 	this.getTerrainType = function(){
 		return terainKey[terrainType].type;
 	}

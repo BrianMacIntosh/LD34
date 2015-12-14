@@ -4,6 +4,7 @@ var Player = function()
 	Actor.call(this);
 	
 	this.isPlayer = true;
+	this.slashSpeedReduction = 0.8;
 	
 	this.transform.position.set(-50, 0, 0);
 	
@@ -12,7 +13,7 @@ var Player = function()
 	this.ignoreSpeedMultAbove = 0.15;
 	
 	// create mesh
-	this.geometry = bmacSdk.GEO.makeSpriteGeo(24,32);
+	this.geometry = bmacSdk.GEO.makeSpriteGeo(48,48);
 	this.mesh = bmacSdk.GEO.makeSpriteMesh(Player.texture, this.geometry);
 	this.transform.add(this.mesh);
 	this.mesh.position.set(0, 0, -50);
@@ -25,7 +26,7 @@ var Player = function()
 	
 	this.controlHelperDom = document.getElementById("interactionMessage");
 	
-	bmacSdk.GEO.setTilesheetGeometry(this.geometry, 0, 1, 24, 4);
+	bmacSdk.GEO.setTilesheetGeometry(this.geometry, 0, 1, 9, 4);
 }
 
 Player.texture = bmacSdk.GEO.loadPixelTexture("media/player.png");

@@ -50,6 +50,7 @@ VillagerManager.prototype.takeTask = function()
 	var task = undefined;
 	for (var c = 0; c < this.tasks.length; c++)
 	{
+		if (this.tasks[c].IsValid && !this.tasks[c].IsValid())continue;
 		if (this.tasks[c].villagerAllowance > 0)
 		{
 			task = this.tasks[c];
@@ -58,6 +59,7 @@ VillagerManager.prototype.takeTask = function()
 	}
 	if(task != null){
 		task.villagerAllowance--;
+		if (task.OnTake)task.OnTake();
 	}
 	return task;
 }
@@ -264,4 +266,31 @@ HungerTask.prototype.getActionIconIndex = function()
 HungerTask.prototype.getPriority = function()
 {
 	return 1000;
+}
+
+var BuildRoadTask = function(x, y)
+{
+	this.x = x;
+	this.y = y;
+	this.villagerAllowance = 1;
+}
+
+BuildRoadTask.prototype.getActionIconIndex = function()
+{
+	return 4;
+}
+
+BuildRoadTask.prototype.getPriority = function()
+{
+	return 100;
+}
+
+BuildRoadTask.prototype.IsValid = function()
+{
+	return sampleGame.resourceManager.resourceCounts.stone - sampleGame.resourceManager.allocatedStone >= roadCost;
+}
+
+BuildRoadTask.prototype.OnTake = function()
+{
+	sampleGame.resourceManager.allocatedStone += roadCost;
 }
